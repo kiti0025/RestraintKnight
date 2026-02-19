@@ -1,0 +1,50 @@
+[gd_scene format=4 uid="uid://bgwlp6v1kuled"]
+
+[ext_resource type="Texture2D" uid="uid://c8id63nk1qsay" path="res://assets/tilesets/Platformer - 16px Grassland/groundL1.png" id="1_h3mcq"]
+[ext_resource type="Texture2D" uid="uid://duas86fhrju02" path="res://assets/tilesets/Platformer - 16px Grassland/groundM1.png" id="2_edpnl"]
+[ext_resource type="Texture2D" uid="uid://baee80iialo2i" path="res://assets/tilesets/Platformer - 16px Grassland/groundR1.png" id="3_q23bv"]
+[ext_resource type="PackedScene" uid="uid://bcbn6jufbonvl" path="res://scenes/characters/player.tscn" id="4_edpnl"]
+[ext_resource type="PackedScene" uid="uid://dk4x71ae5wm8c" path="res://scenes/autoload/game_camera.tscn" id="5_q23bv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_21w1c"]
+size = Vector2(825, 15)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_33hba"]
+texture = ExtResource("1_h3mcq")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tajnf"]
+texture = ExtResource("2_edpnl")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tx1qe"]
+texture = ExtResource("3_q23bv")
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_5nulu"]
+sources/0 = SubResource("TileSetAtlasSource_33hba")
+sources/2 = SubResource("TileSetAtlasSource_tajnf")
+sources/3 = SubResource("TileSetAtlasSource_tx1qe")
+
+[node name="Root" type="Node2D" unique_id=1508318706]
+
+[node name="TileMap" type="StaticBody2D" parent="." unique_id=1929591412]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap" unique_id=27799358]
+position = Vector2(272.5, 8.5)
+shape = SubResource("RectangleShape2D_21w1c")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="TileMap" unique_id=1831434917]
+tile_map_data = PackedByteArray("AAD4/wAAAgAAAAAAAAD5/wAAAgAAAAAAAAD6/wAAAgAAAAAAAAD7/wAAAgAAAAAAAAD8/wAAAgAAAAAAAAD9/wAAAgAAAAAAAAD+/wAAAgAAAAAAAAD//wAAAgAAAAAAAAAAAAAAAgAAAAAAAAABAAAAAgAAAAAAAAACAAAAAgAAAAAAAAADAAAAAgAAAAAAAAAEAAAAAgAAAAAAAAAFAAAAAgAAAAAAAAAGAAAAAgAAAAAAAAAHAAAAAgAAAAAAAAAIAAAAAgAAAAAAAAAJAAAAAgAAAAAAAAAKAAAAAgAAAAAAAAALAAAAAgAAAAAAAAAMAAAAAgAAAAAAAAANAAAAAgAAAAAAAAAOAAAAAgAAAAAAAAAPAAAAAgAAAAAAAAAQAAAAAgAAAAAAAAARAAAAAgAAAAAAAAASAAAAAgAAAAAAAAATAAAAAgAAAAAAAAAUAAAAAgAAAAAAAAAVAAAAAgAAAAAAAAAWAAAAAgAAAAAAAAAXAAAAAgAAAAAAAAAYAAAAAgAAAAAAAAAZAAAAAgAAAAAAAAAaAAAAAgAAAAAAAAAbAAAAAgAAAAAAAAAcAAAAAgAAAAAAAAAdAAAAAgAAAAAAAAAeAAAAAgAAAAAAAAAfAAAAAgAAAAAAAAAgAAAAAgAAAAAAAAAhAAAAAgAAAAAAAAAiAAAAAgAAAAAAAAAjAAAAAgAAAAAAAAAkAAAAAgAAAAAAAAAlAAAAAgAAAAAAAAAmAAAAAgAAAAAAAAAnAAAAAgAAAAAAAAAoAAAAAgAAAAAAAAApAAAAAgAAAAAAAAAqAAAAAwAAAAAAAAD3/wAAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_5nulu")
+
+[node name="Player" parent="." unique_id=1523293338 instance=ExtResource("4_edpnl")]
+position = Vector2(50, -43)
+
+[node name="GameCamera" parent="." unique_id=1202842137 node_paths=PackedStringArray("FollowTarget") instance=ExtResource("5_q23bv")]
+limit_enabled = false
+limit_left = 0
+limit_top = 0
+limit_right = 1152
+limit_bottom = 648
+FollowTarget = NodePath("../Player")

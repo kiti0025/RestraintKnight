@@ -1,3 +1,15 @@
-# Godot 4+ specific ignores
+# Godot 4+ 官方基础忽略
 .godot/
 /android/
+
+# 【你的项目刚需】忽略所有.import资源元数据文件（必加！）
+*.import
+
+# 忽略导出的游戏安装包文件夹（后续导出游戏包不会被上传）
+export/
+export_presets.cfg.bak
+
+# 忽略系统自动生成的临时文件（跨平台兼容，避免Mac/Windows的无用文件上传）
+.DS_Store
+Thumbs.db
+*.tmp

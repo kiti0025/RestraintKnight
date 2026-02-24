@@ -1,183 +1,148 @@
 using Godot;
-using System;
 
-namespace RestraintKnight.Characters
+// 精简版状态枚举（只保留核心移动状态）
+public enum PlayerState
 {
-    public partial class Player : CharacterBody2D
+    Jump,    // 起跳/上升
+    Fall,    // 下落
+    Running, // 跑步
+    Idle     // 站立
+}
+
+public partial class Player : CharacterBody2D
+{
+    #region 编辑器可配置参数
+    [ExportGroup("基础属性")]
+    [Export] public float MoveSpeed = 280f;
+    [Export] public float Gravity = 1300f;
+
+    [ExportGroup("跳跃")]
+    [Export] public float JumpForce = -480f;
+    // 二段跳，不需要在编辑器修改
+    private const int MaxJumpCount = 2;
+
+    [ExportGroup("节点引用")]
+    [Export] public AnimatedSprite2D PlayerSprite;
+    #endregion
+
+    #region 内部状态变量
+    // 核心状态
+    private PlayerState _currentState = PlayerState.Idle;
+    private Vector2 _velocity;
+    private Vector2 _moveInput;
+    private bool _isOnFloor;
+    private float _faceDirection = 1f; // 1=右，-1=左
+
+    // 跳跃
+    private int _currentJumpCount = 0;
+
+    // 动画
+    private string _currentAnimName;
+    #endregion
+
+    #region 初始化
+    public override void _Ready()
     {
-        #region 编辑器配置
-        [ExportCategory("基础移动参数")]
-        [Export] public float WalkSpeed = 150f;
-        [Export] public float RunSpeed = 320f;
-        [Export] public float Gravity = 1800f;
-        [Export] public float JumpForce = -600f;
+        // 自动获取节点
+        if (PlayerSprite == null)
+            PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+    }
+    #endregion
 
-        [ExportCategory("双击检测参数")]
-        [Export] public float DoubleClickWindow = 0.3f;
+    #region 物理帧更新
+    public override void _PhysicsProcess(double delta)
+    {
+        float deltaTime = (float)delta;
+        _isOnFloor = IsOnFloor();
 
-        [ExportCategory("节点引用")]
-        [Export] public AnimatedSprite2D AnimatedSprite;
-        [Export] public AnimationPlayer AnimationPlayer;
-        #endregion
+        _velocity = Velocity;//同步当前速度，确保下面的函数处理的_velocity是上一帧的物理状态
+        // 1. 核心逻辑处理
+        HandleMovementInput();
+        HandleGravity(deltaTime);
+        HandleJumpInput();
 
-        #region 内部状态
-        private enum WeaponState { Sheathed = 1, Drawn = 2 }
-        private WeaponState _currentWeaponState;
-        private Vector2 _velocity;
-        private bool _isRunning;
-        private float _lastLeftPressTime;
-        private float _lastRightPressTime;
+        // 2. 执行移动
+        Velocity = _velocity;
+        MoveAndSlide();
 
-        private const string ANIM_IDLE = "idle";
-        private const string ANIM_WALK = "walking";
-        private const string ANIM_RUN = "running";
-        private const string ANIM_JUMP = "jump";
-        private const string ANIM_FALL = "fall";
-        #endregion
+        UpdateBaseState();
+        // 3. 更新动画
+        UpdateAnimation();
+    }
+    #endregion
 
-        #region 生命周期
-        public override void _Ready()
+    #region 核心逻辑
+    private void HandleGravity(float delta)
+    {
+        if (!_isOnFloor)
         {
-            _currentWeaponState = WeaponState.Sheathed;
-            _isRunning = false;
-
-            if (AnimatedSprite == null)
-            {
-                GD.PrintErr("请在编辑器中给Player脚本赋值AnimatedSprite2D节点！");
-            }
-            if (AnimationPlayer == null)
-            {
-                GD.PrintErr("请在编辑器中给Player脚本赋值AnimationPlayer节点！");
-            }
+            _velocity.Y += Gravity * delta;
         }
-
-        public override void _PhysicsProcess(double delta)
+        else
         {
-            float deltaTime = (float)delta;
-
-            // 1. 重力
-            _velocity.Y = IsOnFloor() ? 0f : _velocity.Y + Gravity * deltaTime;
-
-            // 2. 武器切换
-            HandleWeaponToggle();
-
-            // 3. 移动输入
-            float inputDir = HandleMovementInput();
-
-            // 4. 跳跃
-            HandleJump();
-
-            // 5. 移动执行
-            _velocity.X = inputDir * (_isRunning ? RunSpeed : WalkSpeed);
-            Velocity = _velocity;
-            MoveAndSlide();
-
-            // 6. 动画更新
-            UpdateAnimation(inputDir);
+            _velocity.Y = 0;
+            _currentJumpCount = 0; // 落地重置跳跃计数
         }
-        #endregion
+    }
 
-        #region 核心功能
-        private void HandleWeaponToggle()
+    private void HandleMovementInput()
+    {
+        _moveInput = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+        _velocity.X = _moveInput.X * MoveSpeed;
+
+        // 更新朝向
+        if (Mathf.Abs(_moveInput.X) > 0.2f)//死区阈值
         {
-            if (Input.IsActionJustPressed("sheathe"))
-            {
-                _currentWeaponState = _currentWeaponState == WeaponState.Sheathed 
-                    ? WeaponState.Drawn 
-                    : WeaponState.Sheathed;
-                _isRunning = false;
-            }
+            _faceDirection = _moveInput.X;
+            PlayerSprite.FlipH = _faceDirection < 0;
         }
+    }
 
-        // 【优化1】把左右键重复的双击逻辑抽成通用方法
-        private float HandleMovementInput()
+    private void HandleJumpInput()
+    {
+        if (Input.IsActionJustPressed("jump"))
         {
-            float inputDir = 0f;
-            bool isLeftPressed = Input.IsActionPressed("move_left");
-            bool isRightPressed = Input.IsActionPressed("move_right");
-            bool isOnGround = IsOnFloor();
-
-            if (isOnGround)
-            {
-                // 通用双击检测
-                CheckDoubleClick("move_left", ref _lastLeftPressTime);
-                CheckDoubleClick("move_right", ref _lastRightPressTime);
-
-                // 【优化2】修正松开重置逻辑：原逻辑里IsActionJustReleased时IsPressed已经是false，判断永远不成立
-                if (Input.IsActionJustReleased("move_left") || Input.IsActionJustReleased("move_right"))
-                {
-                    // 直接检查当前是否还有方向键按下，没有就重置
-                    if (!Input.IsActionPressed("move_left") && !Input.IsActionPressed("move_right"))
-                    {
-                        _isRunning = false;
-                    }
-                }
-            }
-
-            // 计算方向
-            if (isLeftPressed) inputDir = -1f;
-            else if (isRightPressed) inputDir = 1f;
-
-            // 【优化3】统一翻转逻辑，避免重复判断
-            if (AnimatedSprite != null && Mathf.Abs(inputDir) > 0.1f)
-            {
-                AnimatedSprite.FlipH = inputDir < 0f;
-            }
-
-            return inputDir;
-        }
-
-        // 通用双击检测方法，消除左右键重复代码
-        private void CheckDoubleClick(string actionName, ref float lastPressTime)
-        {
-            if (Input.IsActionJustPressed(actionName))
-            {
-                float currentTime = (float)Time.GetTicksMsec() / 1000f;
-                _isRunning = currentTime - lastPressTime <= DoubleClickWindow;
-                lastPressTime = currentTime;
-            }
-        }
-
-        private void HandleJump()
-        {
-            if (IsOnFloor() && Input.IsActionJustPressed("move_jump"))
+            if (_currentJumpCount < MaxJumpCount)
             {
                 _velocity.Y = JumpForce;
+                _currentJumpCount++;
             }
         }
-
-        private void UpdateAnimation(float inputDir)
-        {
-            if (AnimatedSprite == null) return;
-
-            string targetAnimBase;
-            bool isOnGround = IsOnFloor();
-
-            if (!isOnGround)
-            {
-                targetAnimBase = _velocity.Y < 0 ? ANIM_JUMP : ANIM_FALL;
-            }
-            else
-            {
-                if (Mathf.Abs(inputDir) > 0.1f)
-                {
-                    targetAnimBase = _isRunning ? ANIM_RUN : ANIM_WALK;
-                }
-                else
-                {
-                    targetAnimBase = ANIM_IDLE;
-                }
-            }
-
-            string finalAnimName = $"{targetAnimBase}_{(int)_currentWeaponState}";
-            
-            // 【优化4】增加动画存在性检查，避免报错
-            if (AnimatedSprite.SpriteFrames.HasAnimation(finalAnimName) 
-                && AnimatedSprite.Animation != finalAnimName)
-            {
-                AnimatedSprite.Play(finalAnimName);
-            }
-        }
-        #endregion
     }
+
+    private void UpdateBaseState()
+    {
+        if (!_isOnFloor)
+        {
+            // 在空中：根据Y轴速度判断是上升还是下落
+            _currentState = Velocity.Y < 0 ? PlayerState.Jump : PlayerState.Fall;//用 Velocity.Y（MoveAndSlide 后的真实值）判断
+        }
+        else
+        {
+            // 在地面：根据输入判断是站立还是跑步
+            _currentState = Mathf.Abs(_moveInput.X) > 0.2f ? PlayerState.Running : PlayerState.Idle;
+        }
+    }
+    #endregion
+
+    #region 动画更新
+    private void UpdateAnimation()
+    {
+        string targetAnim = _currentState switch
+        {
+            PlayerState.Idle => "idle",
+            PlayerState.Running => "running",
+            PlayerState.Jump => "jump",
+            PlayerState.Fall => "fall",
+            _ => "idle"
+        };
+
+        // 只有动画名变化时才触发播放，避免打断当前动画
+        if (_currentAnimName != targetAnim)
+        {
+            PlayerSprite.Play(targetAnim);
+            _currentAnimName = targetAnim;
+        }
+    }
+    #endregion
 }

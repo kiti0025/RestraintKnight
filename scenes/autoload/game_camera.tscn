@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://dk4x71ae5wm8c"]
-
-[ext_resource type="Script" uid="uid://crodivedot6ul" path="res://src/managers/GameCamera.cs" id="1_xh8wk"]
-
-[node name="GameCamera" type="Camera2D" unique_id=1202842137]
-z_index = 2
-script = ExtResource("1_xh8wk")

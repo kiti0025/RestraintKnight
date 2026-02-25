@@ -85,18 +85,26 @@ public partial class Player : CharacterBody2D
         _isHorizontalJustPressed = Input.IsActionJustPressed("move_left") || Input.IsActionJustPressed("move_right");
 
         _moveInput.X = Input.GetAxis("move_left", "move_right");
-        _velocity.X = _moveInput.X * MoveSpeed;
 
         bool isRolling = _currentState == PlayerState.Rolling && PlayerSprite.IsPlaying();
-        if(isRolling ||_isMoveDownPressed)
-        {
-            _velocity.X = 0;
-        }
 
         if (Mathf.Abs(_moveInput.X) > InputDeadzone)
         {
             _faceDirection = _moveInput.X;
             PlayerSprite.FlipH = _faceDirection < 0;
+        }
+        
+        if (isRolling)
+        {
+            _velocity.X = _faceDirection * MoveSpeed * 1.5f;
+        }
+        else if(_isMoveDownPressed)
+        {
+            _velocity.X = 0;
+        }
+        else
+        {
+            _velocity.X = _moveInput.X * MoveSpeed;
         }
     }
 

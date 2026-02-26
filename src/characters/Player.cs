@@ -96,7 +96,8 @@ public partial class Player : CharacterBody2D
         
         if (isRolling)
         {
-            _velocity.X = _faceDirection * MoveSpeed * 1.5f;
+            float speed = PlayerSprite.Frame < 4 ? 2.5f : 1.2f;
+            _velocity.X = _faceDirection * MoveSpeed * speed;
         }
         else if(_isMoveDownPressed)
         {

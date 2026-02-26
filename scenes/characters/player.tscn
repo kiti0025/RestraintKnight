@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://1m04mmmwvvbm" path="res://assets/sprites/characters/player/Knight_player/Fall_KG_2.png" id="2_eojnx"]
 [ext_resource type="Texture2D" uid="uid://bgjd5iv7qg4mp" path="res://assets/sprites/characters/player/Knight_player/Crouching_Idle_KG_2.png" id="3_7vyk4"]
 [ext_resource type="Texture2D" uid="uid://baa1pdlo5rf2b" path="res://assets/sprites/characters/player/Knight_player/Walking_KG_2.png" id="4_dyp2m"]
+[ext_resource type="Texture2D" uid="uid://7yjne2whvv80" path="res://assets/sprites/characters/player/Knight_player/Grab_idle_KG_1.png" id="4_eojnx"]
 [ext_resource type="Texture2D" uid="uid://cgs3113oy7dl0" path="res://assets/sprites/characters/player/Knight_player/Jump_KG_2.png" id="6_7vyk4"]
 [ext_resource type="Texture2D" uid="uid://n3jypan278bm" path="res://assets/sprites/characters/player/Knight_player/Rolling_KG_1.png" id="7_2l4js"]
 [ext_resource type="Texture2D" uid="uid://b0e36ngb0gg8h" path="res://assets/sprites/characters/player/Knight_player/Idle_KG_2.png" id="10_jk2m4"]
@@ -30,6 +31,18 @@ region = Rect2(100, 0, 100, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6ux5t"]
 atlas = ExtResource("2_eojnx")
+region = Rect2(200, 0, 100, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kmyvj"]
+atlas = ExtResource("4_eojnx")
+region = Rect2(0, 0, 100, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a2luo"]
+atlas = ExtResource("4_eojnx")
+region = Rect2(100, 0, 100, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eir2k"]
+atlas = ExtResource("4_eojnx")
 region = Rect2(200, 0, 100, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5njio"]
@@ -172,6 +185,20 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_kmyvj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a2luo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eir2k")
+}],
+"loop": true,
+"name": &"grab_idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_5njio")
 }, {
 "duration": 1.0,
@@ -284,8 +311,10 @@ script = ExtResource("1_jk2m4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1367183918]
 sprite_frames = SubResource("SpriteFrames_jk2m4")
-animation = &"rolling"
+animation = &"grab_idle"
 autoplay = "idle"
+frame = 1
+frame_progress = 0.1504421
 metadata/_edit_lock_ = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1217865474]

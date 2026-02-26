@@ -7,7 +7,8 @@ public enum PlayerState
     Running,
     Rolling,
     CrouchingIdle,
-    Idle
+    Idle,
+    WallSlide 
 }
 
 public partial class Player : CharacterBody2D
@@ -22,6 +23,10 @@ public partial class Player : CharacterBody2D
 
     [ExportGroup("Input")]
     [Export] public float InputDeadzone = 0.2f;
+
+    [ExportGroup("Wall Slide")]
+    [Export] public float WallSlideSpeed = 80f; // 贴墙下滑速度
+    [Export] public float WallStickTime = 1f; // 短暂粘墙时间（优化手感）
 
     [ExportGroup("Node Refs")]
     [Export] public AnimatedSprite2D PlayerSprite;
@@ -38,6 +43,8 @@ public partial class Player : CharacterBody2D
     private float _faceDirection = 1f;
     private int _currentJumpCount;
     private const int MaxJumpCount = 2;
+    private bool _isOnWall;
+    private Vector2 _wallNormal;
     private string _currentAnimName;
     #endregion
 
@@ -51,6 +58,8 @@ public partial class Player : CharacterBody2D
     {
         float deltaTime = (float)delta;
         _isOnFloor = IsOnFloor();
+        _isOnWall = IsOnWall();
+        _wallNormal = GetWallNormal();
 
         _velocity = Velocity;
 
@@ -69,7 +78,15 @@ public partial class Player : CharacterBody2D
     {
         if (!_isOnFloor)
         {
-            _velocity.Y += Gravity * delta;
+            if (_currentState == PlayerState.WallSlide)
+            {
+                // 限制下滑速度
+                _velocity.Y =  WallSlideSpeed;
+            }
+            else
+            {
+                _velocity.Y += Gravity * delta;
+            }
         }
         else
         {
@@ -122,12 +139,29 @@ public partial class Player : CharacterBody2D
     {
         bool hasHorizontalInput = Mathf.Abs(_moveInput.X) > InputDeadzone;
         bool isRollingTriggered = _currentState == PlayerState.Rolling && PlayerSprite.IsPlaying() 
-                                    || _isMoveDownJustPressed && hasHorizontalInput 
-                                    || _isMoveDownPressed && _isHorizontalJustPressed;
+                                || _isMoveDownJustPressed && hasHorizontalInput 
+                                || _isMoveDownPressed && _isHorizontalJustPressed;
 
-        if (!_isOnFloor)
+        if (!_isOnFloor) 
         {
-            _currentState = Velocity.Y < 0 ? PlayerState.Jump : PlayerState.Fall;
+            if (Velocity.Y > 0)
+            {
+                if (_isOnWall)
+                {
+                    _currentState = PlayerState.WallSlide;
+                    // 新增：强制角色面朝墙面（与法线反向）
+                    _faceDirection = Mathf.Sign(_wallNormal.X);
+                    PlayerSprite.FlipH = _faceDirection < 0;
+                }
+                else
+                {
+                    _currentState = PlayerState.Fall;
+                }
+            }
+            else
+            {
+                _currentState = PlayerState.Jump;
+            }
         }
         else if (isRollingTriggered)
         {
@@ -153,6 +187,7 @@ public partial class Player : CharacterBody2D
             PlayerState.CrouchingIdle => "crouching_idle",
             PlayerState.Jump => "jump",
             PlayerState.Fall => "fall",
+            PlayerState.WallSlide => "wall_slide",
             _ => "idle"
         };
 

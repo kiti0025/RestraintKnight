@@ -26,7 +26,6 @@ public partial class Player : CharacterBody2D
 
     [ExportGroup("Wall Slide")]
     [Export] public float WallSlideSpeed = 80f; // 贴墙下滑速度
-    [Export] public float WallStickTime = 1f; // 短暂粘墙时间（优化手感）
 
     [ExportGroup("Node Refs")]
     [Export] public AnimatedSprite2D PlayerSprite;
@@ -44,7 +43,7 @@ public partial class Player : CharacterBody2D
     private int _currentJumpCount;
     private const int MaxJumpCount = 2;
     private bool _isOnWall;
-    private Vector2 _wallNormal;
+    private Vector2 _lastWallJumpNormal; // 记录最近一次蹬墙的墙法线
     private string _currentAnimName;
     #endregion
 
@@ -59,7 +58,6 @@ public partial class Player : CharacterBody2D
         float deltaTime = (float)delta;
         _isOnFloor = IsOnFloor();
         _isOnWall = IsOnWall();
-        _wallNormal = GetWallNormal();
 
         _velocity = Velocity;
 
@@ -92,6 +90,7 @@ public partial class Player : CharacterBody2D
         {
             _velocity.Y = 0;
             _currentJumpCount = 0;
+            _lastWallJumpNormal = Vector2.Zero;
         }
     }
 
@@ -128,10 +127,21 @@ public partial class Player : CharacterBody2D
 
     private void HandleJumpInput()
     {
-        if (Input.IsActionJustPressed("jump") && _currentJumpCount < MaxJumpCount)
+        if (Input.IsActionJustPressed("jump"))
         {
-            _velocity.Y = JumpForce;
-            _currentJumpCount++;
+            if (_currentState == PlayerState.WallSlide)
+            {
+                _velocity.X = -_faceDirection * 2800f; 
+                _velocity.Y = JumpForce; 
+                _currentJumpCount = 2; 
+                PlayerSprite.FlipH = -_faceDirection < 0;
+                _lastWallJumpNormal = GetWallNormal();
+            }
+            else if (_currentJumpCount < MaxJumpCount)
+            {
+                _velocity.Y = JumpForce;
+                _currentJumpCount++;
+            }
         }
     }
 
@@ -146,17 +156,9 @@ public partial class Player : CharacterBody2D
         {
             if (Velocity.Y > 0)
             {
-                if (_isOnWall)
-                {
-                    _currentState = PlayerState.WallSlide;
-                    // 新增：强制角色面朝墙面（与法线反向）
-                    _faceDirection = Mathf.Sign(_wallNormal.X);
-                    PlayerSprite.FlipH = _faceDirection < 0;
-                }
-                else
-                {
-                    _currentState = PlayerState.Fall;
-                }
+                Vector2 currentWallNormal = GetWallNormal();
+                bool isSameWallAsLastJump = _lastWallJumpNormal != Vector2.Zero && currentWallNormal == _lastWallJumpNormal;
+                _currentState = (_isOnWall && !isSameWallAsLastJump) ? PlayerState.WallSlide : PlayerState.Fall;
             }
             else
             {

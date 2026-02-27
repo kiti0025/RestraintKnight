@@ -416,7 +416,7 @@ script = ExtResource("1_jk2m4")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1367183918]
 position = Vector2(-3, 7)
 sprite_frames = SubResource("SpriteFrames_jk2m4")
-animation = &"wall_slide"
+animation = &"crouching_idle"
 autoplay = "idle"
 metadata/_edit_lock_ = true
 

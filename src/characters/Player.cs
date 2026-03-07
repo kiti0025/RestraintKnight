@@ -3,10 +3,10 @@ using Godot;
 public enum PlayerState
 {
 	Jump,
+	jump_double,
 	Fall,
 	Running,
 	Rolling,
-	CrouchingIdle,
 	Idle,
 	WallSlide 
 }
@@ -15,7 +15,7 @@ public partial class Player : CharacterBody2D
 {
 	#region Inspector Config
 	[ExportGroup("Movement")]
-	[Export] public float MoveSpeed = 280f;
+	[Export] public float MoveSpeed = 180f;
 	[Export] public float Gravity = 1300f;
 
 	[ExportGroup("Jump")]
@@ -112,12 +112,8 @@ public partial class Player : CharacterBody2D
 		
 		if (isRolling)
 		{
-			float speed = PlayerSprite.Frame < 4 ? 2.5f : 1.2f;
+			float speed = PlayerSprite.Frame == 8 ? 8f : 0f;
 			_velocity.X = _faceDirection * MoveSpeed * speed;
-		}
-		else if(_isMoveDownPressed)
-		{
-			_velocity.X = 0;
 		}
 		else
 		{
@@ -133,7 +129,7 @@ public partial class Player : CharacterBody2D
 			{
 				_velocity.X = -_faceDirection * 2800f; 
 				_velocity.Y = JumpForce; 
-				_currentJumpCount = 2; 
+				_currentJumpCount = MaxJumpCount; 
 				PlayerSprite.FlipH = -_faceDirection < 0;
 				_lastWallJumpNormal = GetWallNormal();
 			}
@@ -162,16 +158,12 @@ public partial class Player : CharacterBody2D
 			}
 			else
 			{
-				_currentState = PlayerState.Jump;
+				_currentState = _currentJumpCount == 1 ?  PlayerState.Jump : PlayerState.jump_double;
 			}
 		}
 		else if (isRollingTriggered)
 		{
 			_currentState = PlayerState.Rolling;
-		}
-		else if (_isMoveDownPressed)
-		{
-			_currentState = PlayerState.CrouchingIdle;
 		}
 		else
 		{
@@ -186,8 +178,8 @@ public partial class Player : CharacterBody2D
 			PlayerState.Idle => "idle",
 			PlayerState.Running => "running",
 			PlayerState.Rolling => "rolling",
-			PlayerState.CrouchingIdle => "crouching_idle",
 			PlayerState.Jump => "jump",
+			PlayerState.jump_double => "jump_double",
 			PlayerState.Fall => "fall",
 			PlayerState.WallSlide => "wall_slide",
 			_ => "idle"

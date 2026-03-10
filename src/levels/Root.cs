@@ -2,28 +2,38 @@ using Godot;
 
 public partial class Root : Node2D
 {
-    [Export] private TileMapLayer _tileMapLayer;
+    [Export] private TileMapLayer _tileMapLayerBorder; 
     [Export] private Camera2D _camera2d;
 
     public override void _Ready()
     {
-        // 如果没有手动绑定，自动从场景中获取
-        if (_tileMapLayer == null)
-            _tileMapLayer = GetNode<TileMapLayer>("TileMapLayer");
+        if (_tileMapLayerBorder == null)
+            _tileMapLayerBorder = GetNode<TileMapLayer>("TileMapLayer_border");
         if (_camera2d == null)
             _camera2d = GetNode<Camera2D>("Player/Camera2D");
 
-        // 获取 TileMap 使用的矩形区域
-        Rect2 used = _tileMapLayer.GetUsedRect().Grow(-1); // 缩小1个单元以确保边界正确
-        Vector2 tileSize = _tileMapLayer.TileSet.TileSize;
+        // ========== 核心修改：实现 Grow(-0.5) 效果 ==========
+        Rect2 usedTileRect = _tileMapLayerBorder.GetUsedRect(); // 获取原始网格范围
+        float shrinkValue = 0.5f; // 要收缩的单位（对应 Grow(-0.5)）
+        // 1. 位置向右、向下各偏移0.5个网格单位（收缩内侧）
+        usedTileRect.Position += new Vector2(shrinkValue, shrinkValue);
+        // 2. 尺寸宽、高各减少1个网格单位（2*0.5，对应四周各收缩0.5）
+        usedTileRect.Size -= new Vector2(2 * shrinkValue, 2 * shrinkValue);
+        // ==================================================
 
-        // 设置相机边界
-        _camera2d.LimitTop = (int)(used.Position.Y * tileSize.Y);
-        _camera2d.LimitRight = (int)(used.End.X * tileSize.X);
-        _camera2d.LimitBottom = (int)(used.End.Y * tileSize.Y);
-        _camera2d.LimitLeft = (int)(used.Position.X * tileSize.X);
+        Vector2 tilePixelSize = _tileMapLayerBorder.TileSet.TileSize; // 单瓦片像素尺寸
+        Vector2 layerWorldPos = _tileMapLayerBorder.GlobalPosition; // 图层世界位置（避免偏移）
 
-        // 重置相机平滑
+        float mapLeft = layerWorldPos.X + usedTileRect.Position.X * tilePixelSize.X;
+        float mapTop = layerWorldPos.Y + usedTileRect.Position.Y * tilePixelSize.Y;
+        float mapRight = layerWorldPos.X + (usedTileRect.End.X) * tilePixelSize.X;
+        float mapBottom = layerWorldPos.Y + (usedTileRect.End.Y) * tilePixelSize.Y; 
+
+        // 给相机设置精准边界（强制转int避免像素浮点误差）
+        _camera2d.LimitLeft = (int)mapLeft;
+        _camera2d.LimitTop = (int)mapTop;
+        _camera2d.LimitRight = (int)mapRight;
+        _camera2d.LimitBottom = (int)mapBottom;
         _camera2d.ResetSmoothing();
     }
 }

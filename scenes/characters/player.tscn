@@ -218,7 +218,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"fall",
-"speed": 16.0
+"speed": 32.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -256,7 +256,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -264,7 +264,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
-"speed": 16.0
+"speed": 32.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -418,7 +418,7 @@ metadata/_edit_lock_ = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1367183918]
 position = Vector2(-3, 7)
 sprite_frames = SubResource("SpriteFrames_jk2m4")
-animation = &"rolling"
+animation = &"fall"
 autoplay = "idle"
 metadata/_edit_lock_ = true
 
@@ -431,8 +431,7 @@ shape = SubResource("CapsuleShape2D_xhtjm")
 metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2030668559]
-visible = false
-zoom = Vector2(2, 2)
+zoom = Vector2(3, 3)
 limit_smoothed = true
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true

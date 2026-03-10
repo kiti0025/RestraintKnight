@@ -54,11 +54,16 @@ public partial class Player : CharacterBody2D
 	private float _invincibleTimer;
 	#endregion
 
+	[Signal]
+    public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
+
+
 	public override void _Ready()
 	{
 		if (PlayerSprite == null)
 			PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		_currentHealth = MaxHealth; 
+		EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -201,6 +206,7 @@ public partial class Player : CharacterBody2D
 		_currentState = PlayerState.Hit;
 
 		GD.Print($"Hurt！: {_currentHealth}");
+		EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
 
 		if (_currentHealth <= 0)
 		{

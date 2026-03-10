@@ -6,6 +6,8 @@
 [ext_resource type="TileSet" uid="uid://ln6yed075lrw" path="res://assets/tilesets/border.tres" id="4_q23bv"]
 [ext_resource type="PackedScene" uid="uid://pd8cwaxdnn4r" path="res://scenes/traps/saw.tscn" id="5_q23bv"]
 [ext_resource type="Texture2D" uid="uid://ftwxpdx11ktv" path="res://assets/sprites/Free/Traps/Saw/Chain.png" id="6_21w1c"]
+[ext_resource type="Script" uid="uid://bpksjymvb8a8y" path="res://src/UI/HealthLabel.cs" id="7_33hba"]
+[ext_resource type="Texture2D" uid="uid://ck80cwsgxw23b" path="res://assets/sprites/Free/Traps/Rock Head/Idle.png" id="8_tajnf"]
 
 [node name="Root" type="Node2D" unique_id=1508318706]
 script = ExtResource("1_edpnl")
@@ -90,3 +92,30 @@ texture = ExtResource("6_21w1c")
 texture_mode = 1
 begin_cap_mode = 1
 end_cap_mode = 1
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=804526884]
+
+[node name="HealthBarBg" type="ColorRect" parent="UILayer" unique_id=1670449270 node_paths=PackedStringArray("Player", "HealthBarBg", "HealthBarFill")]
+offset_left = 110.0
+offset_top = 50.0
+offset_right = 310.0
+offset_bottom = 80.0
+color = Color(0.74509805, 0.74509805, 0.74509805, 0)
+script = ExtResource("7_33hba")
+Player = NodePath("../../Player")
+HealthBarBg = NodePath(".")
+HealthBarFill = NodePath("HealthBarFill")
+
+[node name="HealthBarFill" type="ColorRect" parent="UILayer/HealthBarBg" unique_id=1779946781]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 30.0
+color = Color(0, 1, 0, 1)
+
+[node name="PlayerHead" type="TextureRect" parent="UILayer" unique_id=709057589]
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 100.0
+offset_bottom = 100.0
+texture = ExtResource("8_tajnf")
+stretch_mode = 4

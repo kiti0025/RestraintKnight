@@ -15,6 +15,7 @@ public partial class Saw : Area2D
     public override void _Ready()
     {
         CalculatePathInfo();
+        BodyEntered += OnBodyEntered;
     }
 
     public override void _PhysicsProcess(double delta)
@@ -44,6 +45,16 @@ public partial class Saw : Area2D
         }
 
         GlobalPosition = GetPositionByProgress(_currentProgress);
+    }
+
+    private void OnBodyEntered(Node2D body)
+    {
+        // 检查碰撞体是否是 Player
+        if (body is Player player)
+        {
+            // 调用 Player 的受伤函数，造成 1 点伤害
+            player.TakeDamage(1);
+        }
     }
 
     private void CalculatePathInfo()

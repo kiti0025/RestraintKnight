@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bcbn6jufbonvl"]
 
 [ext_resource type="Script" uid="uid://bxl5r3w133b76" path="res://src/characters/Player.cs" id="1_jk2m4"]
+[ext_resource type="Texture2D" uid="uid://2fgn1k5o0v3m" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Hit (32x32).png" id="3_7vyk4"]
 [ext_resource type="Texture2D" uid="uid://dfmi6na7pq60k" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Double Jump (32x32).png" id="5_qgnko"]
 [ext_resource type="Texture2D" uid="uid://ef42o482poq1" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Run (32x32).png" id="7_eojnx"]
 [ext_resource type="Texture2D" uid="uid://drrgw5qnedr42" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Wall Jump (32x32).png" id="8_qgnko"]
@@ -13,6 +14,34 @@
 [sub_resource type="AtlasTexture" id="AtlasTexture_6rclf"]
 atlas = ExtResource("13_yhyq5")
 region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w5bca"]
+atlas = ExtResource("3_7vyk4")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3uc7m"]
+atlas = ExtResource("3_7vyk4")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pue7u"]
+atlas = ExtResource("3_7vyk4")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7k8pb"]
+atlas = ExtResource("3_7vyk4")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5njio"]
+atlas = ExtResource("3_7vyk4")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aphfe"]
+atlas = ExtResource("3_7vyk4")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dvq58"]
+atlas = ExtResource("3_7vyk4")
+region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s0anf"]
 atlas = ExtResource("14_5jukt")
@@ -222,6 +251,32 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_w5bca")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3uc7m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pue7u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7k8pb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5njio")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aphfe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dvq58")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_s0anf")
 }, {
 "duration": 1.0,
@@ -418,8 +473,10 @@ metadata/_edit_lock_ = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1367183918]
 position = Vector2(-3, 7)
 sprite_frames = SubResource("SpriteFrames_jk2m4")
-animation = &"fall"
+animation = &"hit"
 autoplay = "idle"
+frame = 6
+frame_progress = 1.0
 metadata/_edit_lock_ = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1217865474]
@@ -431,7 +488,7 @@ shape = SubResource("CapsuleShape2D_xhtjm")
 metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2030668559]
-zoom = Vector2(3, 3)
+zoom = Vector2(2, 2)
 limit_smoothed = true
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true

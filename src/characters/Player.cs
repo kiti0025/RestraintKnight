@@ -8,7 +8,8 @@ public enum PlayerState
 	Running,
 	Rolling,
 	Idle,
-	WallSlide 
+	WallSlide,
+	Hit
 }
 
 public partial class Player : CharacterBody2D
@@ -29,6 +30,9 @@ public partial class Player : CharacterBody2D
 
 	[ExportGroup("Node Refs")]
 	[Export] public AnimatedSprite2D PlayerSprite;
+	[ExportGroup("Health")]
+	[Export] public int MaxHealth = 3; // 最大生命值
+	[Export] public float InvincibleDuration = 1f; // 受伤后无敌时间（秒）
 	#endregion
 
 	#region Runtime State
@@ -45,17 +49,31 @@ public partial class Player : CharacterBody2D
 	private bool _isOnWall;
 	private Vector2 _lastWallJumpNormal; // 记录最近一次蹬墙的墙法线
 	private string _currentAnimName;
+	private int _currentHealth;
+	private bool _isInvincible;
+	private float _invincibleTimer;
 	#endregion
 
 	public override void _Ready()
 	{
 		if (PlayerSprite == null)
 			PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		_currentHealth = MaxHealth; 
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		float deltaTime = (float)delta;
+
+		if (_isInvincible)
+		{
+			_invincibleTimer -= deltaTime;
+			if (_invincibleTimer <= 0)
+			{
+				_isInvincible = false;
+			}
+		}
+
 		_isOnFloor = IsOnFloor();
 		_isOnWall = IsOnWall();
 
@@ -78,7 +96,6 @@ public partial class Player : CharacterBody2D
 		{
 			if (_currentState == PlayerState.WallSlide)
 			{
-				// 限制下滑速度
 				_velocity.Y =  WallSlideSpeed;
 			}
 			else
@@ -143,6 +160,9 @@ public partial class Player : CharacterBody2D
 
 	private void UpdateBaseState()
 	{
+		if (_currentState == PlayerState.Hit && PlayerSprite.IsPlaying())
+            return;
+
 		bool hasHorizontalInput = Mathf.Abs(_moveInput.X) > InputDeadzone;
 		bool isRollingTriggered = _currentState == PlayerState.Rolling && PlayerSprite.IsPlaying() 
 								|| _isMoveDownJustPressed && hasHorizontalInput 
@@ -171,10 +191,33 @@ public partial class Player : CharacterBody2D
 		}
 	}
 
+	public void TakeDamage(int damage)
+	{
+		if (_isInvincible || _currentState == PlayerState.Hit) return;
+
+		_currentHealth -= damage;
+		_isInvincible = true;
+		_invincibleTimer = InvincibleDuration;
+		_currentState = PlayerState.Hit;
+
+		GD.Print($"Hurt！: {_currentHealth}");
+
+		if (_currentHealth <= 0)
+		{
+			HandleDeath();
+		}
+	}
+
+	private void HandleDeath()
+	{
+		GD.Print("Game Over!");
+	}
+
 	private void UpdateAnimation()
 	{
 		string targetAnim = _currentState switch
 		{
+			PlayerState.Hit => "hit", 
 			PlayerState.Idle => "idle",
 			PlayerState.Running => "running",
 			PlayerState.Rolling => "rolling",
@@ -191,4 +234,5 @@ public partial class Player : CharacterBody2D
 			_currentAnimName = targetAnim;
 		}
 	}
+	
 }

@@ -19,7 +19,7 @@ public partial class Player : CharacterBody2D
 	[Export] public float Gravity = 1300f;
 
 	[ExportGroup("Jump")]
-	[Export] public float JumpForce = -480f;
+	[Export] public float JumpForce = -380f;
 
 	[ExportGroup("Input")]
 	[Export] public float InputDeadzone = 0.2f;

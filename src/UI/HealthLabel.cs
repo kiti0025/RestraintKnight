@@ -8,6 +8,11 @@ public partial class HealthLabel : ColorRect
 
     public override void _Ready()
     {
+        if (Player == null)
+        {
+            Player = GetNodeOrNull<Player>("/root/Root/Player"); 
+        }        
+
         if (Player == null || HealthBarBg == null || HealthBarFill == null)
         {
             GD.PrintErr("请绑定 Player/HealthBarBg/HealthBarFill 节点！");

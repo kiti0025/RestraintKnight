@@ -16,22 +16,22 @@ public partial class Player : CharacterBody2D
 {
 	#region Inspector Config
 	[ExportGroup("Movement")]
-	[Export] public float MoveSpeed = 180f;
-	[Export] public float Gravity = 1300f;
+	[Export] public float MoveSpeed = 150f;
+	[Export] public float Gravity = 950f;
 
 	[ExportGroup("Jump")]
-	[Export] public float JumpForce = -380f;
+	[Export] public float JumpForce = -280f;
 
 	[ExportGroup("Input")]
 	[Export] public float InputDeadzone = 0.2f;
 
 	[ExportGroup("Wall Slide")]
-	[Export] public float WallSlideSpeed = 80f; // 贴墙下滑速度
+	[Export] public float WallSlideSpeed = 60f; 
 
 	[ExportGroup("Node Refs")]
 	[Export] public AnimatedSprite2D PlayerSprite;
 	[ExportGroup("Health")]
-	[Export] public int MaxHealth = 3; // 最大生命值
+	[Export] public int MaxHealth = 3; 
 	[Export] public float InvincibleDuration = 1f; // 受伤后无敌时间（秒）
 	#endregion
 
@@ -149,7 +149,7 @@ public partial class Player : CharacterBody2D
 		{
 			if (_currentState == PlayerState.WallSlide)
 			{
-				_velocity.X = -_faceDirection * 2800f; 
+				_velocity.X = -_faceDirection * 800f; 
 				_velocity.Y = JumpForce; 
 				_currentJumpCount = MaxJumpCount; 
 				PlayerSprite.FlipH = -_faceDirection < 0;

@@ -1,36 +1,41 @@
 [gd_scene format=3 uid="uid://b0bf6m41ia73o"]
 
-[ext_resource type="Script" uid="uid://bpksjymvb8a8y" path="res://src/UI/HealthLabel.cs" id="1_q7ah2"]
+[ext_resource type="Script" uid="uid://cjunk5g4cwmu0" path="res://src/UI/UiPlayer.cs" id="1_6o7sd"]
 [ext_resource type="Texture2D" uid="uid://ck80cwsgxw23b" path="res://assets/sprites/Free/Traps/Rock Head/Idle.png" id="2_nn8fr"]
 [ext_resource type="Script" uid="uid://fnaplpr7orl7" path="res://src/UI/UiGameOver.cs" id="3_6o7sd"]
 
 [node name="PlayerUI" type="Node2D" unique_id=1645210851]
 
-[node name="UiLayer" type="CanvasLayer" parent="." unique_id=534832053]
+[node name="UiPlayer" type="CanvasLayer" parent="." unique_id=534832053 node_paths=PackedStringArray("HealthBarBg", "HealthBarFill")]
+script = ExtResource("1_6o7sd")
+HealthBarBg = NodePath("HealthBarBg")
+HealthBarFill = NodePath("HealthBarBg/HealthBarFill")
 
-[node name="HealthBarBg" type="ColorRect" parent="UiLayer" unique_id=1395527615 node_paths=PackedStringArray("HealthBarBg", "HealthBarFill")]
-offset_left = 110.0
-offset_top = 50.0
-offset_right = 310.0
-offset_bottom = 80.0
+[node name="HealthBarBg" type="ColorRect" parent="UiPlayer" unique_id=1395527615]
+anchors_preset = -1
+anchor_left = 0.09548611
+anchor_top = 0.07716049
+anchor_right = 0.2690972
+anchor_bottom = 0.12345679
 color = Color(0.74509805, 0.74509805, 0.74509805, 0)
-script = ExtResource("1_q7ah2")
-HealthBarBg = NodePath(".")
-HealthBarFill = NodePath("HealthBarFill")
+metadata/_edit_use_anchors_ = true
 
-[node name="HealthBarFill" type="ColorRect" parent="UiLayer/HealthBarBg" unique_id=1555433356]
+[node name="HealthBarFill" type="ColorRect" parent="UiPlayer/HealthBarBg" unique_id=1555433356]
 layout_mode = 0
-offset_right = 200.0
-offset_bottom = 30.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 color = Color(0, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
 
-[node name="PlayerHead" type="TextureRect" parent="UiLayer" unique_id=414422900]
-offset_left = 40.0
-offset_top = 40.0
-offset_right = 100.0
-offset_bottom = 100.0
+[node name="PlayerHead" type="TextureRect" parent="UiPlayer" unique_id=414422900]
+anchors_preset = -1
+anchor_left = 0.034722224
+anchor_top = 0.061728396
+anchor_right = 0.08680555
+anchor_bottom = 0.15432099
 texture = ExtResource("2_nn8fr")
 stretch_mode = 4
+metadata/_edit_use_anchors_ = true
 
 [node name="UiGameOver" type="CanvasLayer" parent="." unique_id=1474067085 node_paths=PackedStringArray("_background", "_gameOverLabel", "_restartButton")]
 script = ExtResource("3_6o7sd")
@@ -45,7 +50,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 0, 0, 0.39215687)
+color = Color(0, 0, 0, 1)
 
 [node name="Label" type="Label" parent="UiGameOver" unique_id=481091983]
 z_index = 2

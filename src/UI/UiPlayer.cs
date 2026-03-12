@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class HealthLabel : ColorRect 
+public partial class UiPlayer : CanvasLayer 
 {
     [Export] public Player Player;                
     [Export] public ColorRect HealthBarBg;        

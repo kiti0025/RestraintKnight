@@ -6,7 +6,7 @@
 [ext_resource type="TileSet" uid="uid://ln6yed075lrw" path="res://assets/tilesets/border.tres" id="4_q23bv"]
 [ext_resource type="PackedScene" uid="uid://pd8cwaxdnn4r" path="res://scenes/traps/saw.tscn" id="5_q23bv"]
 [ext_resource type="Texture2D" uid="uid://ftwxpdx11ktv" path="res://assets/sprites/Free/Traps/Saw/Chain.png" id="6_21w1c"]
-[ext_resource type="PackedScene" uid="uid://b0bf6m41ia73o" path="res://scenes/UI/ui_layer.tscn" id="7_33hba"]
+[ext_resource type="PackedScene" uid="uid://b0bf6m41ia73o" path="res://scenes/UI/PLayerUI.tscn" id="7_33hba"]
 
 [node name="Root" type="Node2D" unique_id=1508318706]
 script = ExtResource("1_edpnl")
@@ -92,4 +92,4 @@ texture_mode = 1
 begin_cap_mode = 1
 end_cap_mode = 1
 
-[node name="UILayer" parent="." unique_id=534832053 instance=ExtResource("7_33hba")]
+[node name="PlayerUI" parent="." unique_id=1645210851 instance=ExtResource("7_33hba")]

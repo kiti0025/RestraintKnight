@@ -13,7 +13,7 @@ config_version=5
 config/name="RestraintKnight"
 run/main_scene="uid://bgwlp6v1kuled"
 config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
-config/icon="uid://w2qy11fpl634"
+config/icon="uid://w8irqp426afm"
 
 [display]
 

@@ -205,7 +205,6 @@ public partial class Player : CharacterBody2D
 		_invincibleTimer = InvincibleDuration;
 		_currentState = PlayerState.Hit;
 
-		GD.Print($"Hurt！: {_currentHealth}");
 		EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
 
 		if (_currentHealth <= 0)
@@ -216,7 +215,8 @@ public partial class Player : CharacterBody2D
 
 	private void HandleDeath()
 	{
-		GD.Print("Game Over!");
+        UiGameOver uiGameOver = GetNodeOrNull<UiGameOver>("/root/Root/PlayerUI/UiGameOver");
+		uiGameOver.ShowGameOver();
 	}
 
 	private void UpdateAnimation()

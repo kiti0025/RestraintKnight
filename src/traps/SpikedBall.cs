@@ -57,6 +57,8 @@ public partial class SpikedBall : Area2D
         _balanceAngleRad = _currentAngleRad; // 单摆平衡位置 = 初始线段方向
 
         _isMoving = AutoStart;
+
+        BodyEntered += OnBodyEntered;
     }
 
     public override void _PhysicsProcess(double delta)
@@ -89,5 +91,13 @@ public partial class SpikedBall : Area2D
         
         GlobalPosition = newBallPos;
         _ropeLine.SetPointPosition(1, _ropeLine.ToLocal(newBallPos)); // 同步Line2D第二个顶点位置
+    }
+
+    private void OnBodyEntered(Node2D body)
+    {
+        if (body is Player player)
+        {
+            player.TakeDamage(1);
+        }
     }
 }

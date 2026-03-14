@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cdaxfr088oo5i" path="res://scenes/traps/SpikedBall.tscn" id="7_qecki"]
 [ext_resource type="Texture2D" uid="uid://b34yt2mrnrf57" path="res://assets/sprites/Free/Traps/Spiked Ball/Chain.png" id="8_4hlm0"]
 [ext_resource type="PackedScene" uid="uid://csjfphmoff3j8" path="res://scenes/traps/FallingPlatform.tscn" id="9_ur0mj"]
+[ext_resource type="PackedScene" uid="uid://bjanaet67mvb7" path="res://scenes/traps/Trampoline.tscn" id="10_ovq5d"]
 
 [node name="Root" type="Node2D" unique_id=1508318706]
 script = ExtResource("1_177vr")
@@ -163,6 +164,12 @@ position = Vector2(334, -226)
 
 [node name="FallingPlatform_4" parent="trips" unique_id=1736909766 instance=ExtResource("9_ur0mj")]
 position = Vector2(518, -227)
+
+[node name="Trampoline_1" parent="trips" unique_id=2047662851 instance=ExtResource("10_ovq5d")]
+position = Vector2(267, -46)
+
+[node name="Trampoline_2" parent="trips" unique_id=557364082 instance=ExtResource("10_ovq5d")]
+position = Vector2(758, -46)
 
 [node name="PlayerUI" parent="." unique_id=1645210851 instance=ExtResource("7_pp1d3")]
 metadata/_edit_lock_ = true

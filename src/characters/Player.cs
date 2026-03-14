@@ -110,7 +110,10 @@ public partial class Player : CharacterBody2D
 		}
 		else
 		{
-			_velocity.Y = 0;
+			if (_velocity.Y > 0)
+			{
+				_velocity.Y = 0;
+			}
 			_currentJumpCount = 0;
 			_lastWallJumpNormal = Vector2.Zero;
 		}

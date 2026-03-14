@@ -160,7 +160,6 @@ public partial class FallingPlatform : StaticBody2D
         _isTriggered = false;
         _playersOnPlatform.Clear();
 
-        GD.Print("平台已刷新复活！");
     }
     #endregion
 

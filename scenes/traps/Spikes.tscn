@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dfbr5xuutq7nu"]
+
+[ext_resource type="Texture2D" uid="uid://bdic3ctnlkak4" path="res://assets/sprites/Free/Traps/Spikes/Idle.png" id="1_ccemp"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_ccemp"]
+script/source = "using Godot;
+using System.Linq;
+
+public partial class Spikes : Area2D
+{
+    // 扣血间隔（0.5秒扣1次，可自己调）
+    [Export] private float DamageInterval = 0.5f;
+    private float _damageTimer;
+
+    public override void _PhysicsProcess(double delta)
+    {
+        // 持续计时
+        _damageTimer += (float)delta;
+
+        // 检测当前是否有玩家重叠在刺里
+        var player = GetOverlappingBodies().FirstOrDefault(x => x is Player) as Player;
+        
+        // 如果玩家在刺里 + 计时到了 → 扣血
+        if (player != null && _damageTimer >= DamageInterval)
+        {
+            player.TakeDamage(1);
+            _damageTimer = 0; // 重置计时
+        }
+    }
+}"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ccemp"]
+size = Vector2(15, 7)
+
+[node name="Spikes" type="Area2D" unique_id=1046238162]
+script = SubResource("CSharpScript_ccemp")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1988229957]
+texture = ExtResource("1_ccemp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1768480961]
+position = Vector2(-0.5, 4.5)
+shape = SubResource("RectangleShape2D_ccemp")

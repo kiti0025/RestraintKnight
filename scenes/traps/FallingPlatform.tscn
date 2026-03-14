@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://csjfphmoff3j8"]
+
+[ext_resource type="Script" uid="uid://3vxkkwkb34n" path="res://src/traps/FallingPlatform.cs" id="1_xu0yy"]
+[ext_resource type="Texture2D" uid="uid://6rerfpl0ld62" path="res://assets/sprites/Free/Traps/Falling Platforms/On (32x10).png" id="2_aq7jl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v8wfp"]
+atlas = ExtResource("2_aq7jl")
+region = Rect2(0, 0, 32, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xu0yy"]
+atlas = ExtResource("2_aq7jl")
+region = Rect2(32, 0, 32, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aq7jl"]
+atlas = ExtResource("2_aq7jl")
+region = Rect2(64, 0, 32, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6wtt"]
+atlas = ExtResource("2_aq7jl")
+region = Rect2(96, 0, 32, 10)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0m1eo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v8wfp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xu0yy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aq7jl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p6wtt")
+}],
+"loop": true,
+"name": &"on",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v8wfp"]
+size = Vector2(30, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xu0yy"]
+size = Vector2(28, 10)
+
+[node name="FallingPlatform" type="StaticBody2D" unique_id=951235340]
+script = ExtResource("1_xu0yy")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=255758917]
+sprite_frames = SubResource("SpriteFrames_0m1eo")
+animation = &"on"
+autoplay = "on"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=997373276]
+shape = SubResource("RectangleShape2D_v8wfp")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1243473211]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1736674237]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_xu0yy")

@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://b0bf6m41ia73o" path="res://scenes/UI/PLayerUI.tscn" id="7_pp1d3"]
 [ext_resource type="PackedScene" uid="uid://cdaxfr088oo5i" path="res://scenes/traps/SpikedBall.tscn" id="7_qecki"]
 [ext_resource type="Texture2D" uid="uid://b34yt2mrnrf57" path="res://assets/sprites/Free/Traps/Spiked Ball/Chain.png" id="8_4hlm0"]
+[ext_resource type="PackedScene" uid="uid://csjfphmoff3j8" path="res://scenes/traps/FallingPlatform.tscn" id="9_ur0mj"]
 
 [node name="Root" type="Node2D" unique_id=1508318706]
 script = ExtResource("1_177vr")
@@ -150,6 +151,18 @@ texture = ExtResource("8_4hlm0")
 texture_mode = 1
 begin_cap_mode = 1
 end_cap_mode = 1
+
+[node name="FallingPlatform_1" parent="trips" unique_id=476676086 instance=ExtResource("9_ur0mj")]
+position = Vector2(157, -127)
+
+[node name="FallingPlatform_2" parent="trips" unique_id=951235340 instance=ExtResource("9_ur0mj")]
+position = Vector2(234, -170)
+
+[node name="FallingPlatform_3" parent="trips" unique_id=562972614 instance=ExtResource("9_ur0mj")]
+position = Vector2(334, -226)
+
+[node name="FallingPlatform_4" parent="trips" unique_id=1736909766 instance=ExtResource("9_ur0mj")]
+position = Vector2(518, -227)
 
 [node name="PlayerUI" parent="." unique_id=1645210851 instance=ExtResource("7_pp1d3")]
 metadata/_edit_lock_ = true

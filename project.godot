@@ -24,6 +24,10 @@ window/stretch/mode="canvas_items"
 
 project/assembly_name="RestraintKnight"
 
+[global_group]
+
+player=""
+
 [input]
 
 move_left={

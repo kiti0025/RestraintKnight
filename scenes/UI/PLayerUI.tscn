@@ -37,6 +37,17 @@ texture = ExtResource("2_nn8fr")
 stretch_mode = 4
 metadata/_edit_use_anchors_ = true
 
+[node name="ScoreLabel" type="Label" parent="UiPlayer" unique_id=1481212517]
+anchors_preset = -1
+anchor_right = 0.051215276
+anchor_bottom = 0.03549383
+offset_left = 116.0
+offset_top = 86.0
+offset_right = 116.0
+offset_bottom = 86.0
+text = "分数："
+metadata/_edit_use_anchors_ = true
+
 [node name="UiGameOver" type="CanvasLayer" parent="." unique_id=1474067085 node_paths=PackedStringArray("_background", "_gameOverLabel", "_restartButton")]
 script = ExtResource("3_6o7sd")
 _background = NodePath("ColorRect")

@@ -181,7 +181,7 @@ animations = [{
 radius = 5.0
 
 [node name="Apple" type="Area2D" unique_id=466415825]
-metadata/FruitScore = 100
+metadata/FruitScore = 140
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1061474488]
 sprite_frames = SubResource("SpriteFrames_76idx")

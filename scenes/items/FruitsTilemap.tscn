@@ -1,13 +1,17 @@
 [gd_scene format=3 uid="uid://pbblc70i0cwd"]
 
 [ext_resource type="PackedScene" uid="uid://5js08e6pbmgk" path="res://scenes/items/Apple.tscn" id="1_lp5g7"]
-[ext_resource type="PackedScene" uid="uid://dpavlysebeh17" path="res://scenes/items/Banana.tscn" id="2_er0qw"]
+[ext_resource type="PackedScene" uid="uid://dpavlysebeh17" path="res://scenes/items/Orange.tscn" id="2_er0qw"]
+[ext_resource type="PackedScene" uid="uid://cxtkk28ta1qtt" path="res://scenes/items/Kiwi.tscn" id="3_i8mh0"]
 [ext_resource type="Script" uid="uid://cbocihlu15ad8" path="res://src/items/FruitsTilemap.cs" id="3_ov0ir"]
+[ext_resource type="PackedScene" uid="uid://65fyr1edkbqf" path="res://scenes/items/Pineapple.tscn" id="4_cbwo6"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_ov0ir"]
 resource_name = "fruits"
 scenes/1/scene = ExtResource("1_lp5g7")
 scenes/2/scene = ExtResource("2_er0qw")
+scenes/3/scene = ExtResource("3_i8mh0")
+scenes/4/scene = ExtResource("4_cbwo6")
 
 [sub_resource type="TileSet" id="TileSet_ov0ir"]
 sources/0 = SubResource("TileSetScenesCollectionSource_ov0ir")

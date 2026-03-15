@@ -13,13 +13,13 @@
 [ext_resource type="PackedScene" uid="uid://bjanaet67mvb7" path="res://scenes/traps/Trampoline.tscn" id="10_ovq5d"]
 [ext_resource type="PackedScene" uid="uid://bta21ywrjteug" path="res://scenes/traps/SpikesTilemap.tscn" id="11_6ec0s"]
 [ext_resource type="PackedScene" uid="uid://pbblc70i0cwd" path="res://scenes/items/FruitsTilemap.tscn" id="12_pp1d3"]
-[ext_resource type="PackedScene" uid="uid://m4e5jpjnngfj" path="res://scenes/traps/RockHead.tscn" id="12_ta7m0"]
+[ext_resource type="PackedScene" uid="uid://m4e5jpjnngfj" path="res://scenes/traps/SpikeHead.tscn" id="12_ta7m0"]
 
 [node name="Root" type="Node2D" unique_id=1508318706]
 script = ExtResource("1_6ec0s")
 
 [node name="Player" parent="." unique_id=1523293338 instance=ExtResource("2_qecki")]
-position = Vector2(36, -231)
+position = Vector2(790, -231)
 
 [node name="TileMapLayer_grass" type="TileMapLayer" parent="." unique_id=1441189463]
 position = Vector2(1, 0)
@@ -180,9 +180,8 @@ position = Vector2(62, -141)
 [node name="SpikesTilemap" parent="trips" unique_id=44915192 instance=ExtResource("11_6ec0s")]
 tile_map_data = PackedByteArray("AAAGAP3/AAAAAAAAAAAHAP3/AAAAAAAAAAAIAP3/AAAAAAAAAAAJAP3/AAAAAAAAAAAKAP3/AAAAAAAAAAAEAPv/AAAAAAAAAAAFAPv/AAAAAAAAAAAcAP3/AAAAAAAAAAAdAP3/AAAAAAAAAAAeAP3/AAAAAAAAAAAfAP3/AAAAAAAAAAAgAP3/AAAAAAAAAAAhAP3/AAAAAAAAAAAiAP3/AAAAAAAAAAAjAP3/AAAAAAAAAAAkAP3/AAAAAAAAAAA=")
 
-[node name="RockHead_1" parent="trips" unique_id=5120262 instance=ExtResource("12_ta7m0")]
-position = Vector2(837, -311)
-DownFirst = false
+[node name="SpikeHead_1" parent="trips" unique_id=5120262 instance=ExtResource("12_ta7m0")]
+position = Vector2(1071, -48)
 
 [node name="FruitsTilemap" parent="." unique_id=318655951 instance=ExtResource("12_pp1d3")]
 position = Vector2(0, -1)

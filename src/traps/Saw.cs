@@ -49,10 +49,8 @@ public partial class Saw : Area2D
 
     private void OnBodyEntered(Node2D body)
     {
-        // 检查碰撞体是否是 Player
         if (body is Player player)
         {
-            // 调用 Player 的受伤函数，造成 1 点伤害
             player.TakeDamage(1);
         }
     }

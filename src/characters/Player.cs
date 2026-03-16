@@ -182,7 +182,8 @@ public partial class Player : CharacterBody2D
 			{
 				Vector2 currentWallNormal = GetWallNormal();
 				bool isSameWallAsLastJump = _lastWallJumpNormal != Vector2.Zero && currentWallNormal == _lastWallJumpNormal;
-				_currentState = (_isOnWall && !isSameWallAsLastJump) ? PlayerState.WallSlide : PlayerState.Fall;
+				bool isPressingTowardsWall = Mathf.Abs(_moveInput.X) > InputDeadzone && (currentWallNormal.X * _moveInput.X < 0);
+				_currentState = (_isOnWall && !isSameWallAsLastJump && isPressingTowardsWall) ? PlayerState.WallSlide : PlayerState.Fall;
 			}
 			else
 			{

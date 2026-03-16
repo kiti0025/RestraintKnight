@@ -2,255 +2,137 @@ using Godot;
 
 public partial class RockHead : AnimatableBody2D
 {
-    [ExportGroup("运动模式设置")]
-    [Export] public bool EnableHorizontal = true;
-    [Export] public bool EnableVertical = true;
-    [Export] public bool RightFirst = true;  // 垂直撞墙：优先往右（false则优先往左）
-    [Export] public bool DownFirst = true;   // 水平撞墙：优先往下（false则优先往上）
+	[Export] public float MoveSpeed = 150f;
+	[Export] public bool EnableHorizontal = true;
+	[Export] public bool EnableVertical = true;
+	[Export] public bool RightFirst = true;
+	[Export] public bool DownFirst = true;
 
-    [ExportGroup("基础设置")]
-    [Export] public float MoveSpeed = 120f;
-    [Export] public float HitAnimTimeout = 1.0f;
+	// 动画设置
+	[Export] public float BlinkInterval = 3f;
 
-    // 内部状态
-    private enum MoveState
-    {
-        Normal,
-        HitPause
-    }
-    private MoveState _currentState = MoveState.Normal;
-    private AnimatedSprite2D _animSprite;
-    private float _blinkTimer = 0f;
-    private float _hitAnimTimer = 0f;
-    private const float BlinkInterval = 3f;
-    private Vector2 _currentMoveDir;
+	// 内部变量
+	private Vector2 _moveDir;
+	private CollisionShape2D _bodyCol;
+	private AnimatedSprite2D _animSprite;
+	private Area2D _damageZone; // 只需要加一个Area2D检测玩家
+	
+	// 动画状态
+	private bool _isPlayingHitAnim = false;
+	private float _blinkTimer = 0f;
+	private float _damageCooldown = 0f;
+	private const float DamageCooldownTime = 0.5f;
+	private const string PlayerGroup = "player";
 
-    // 碰撞与伤害
-    private Area2D _damageZone;
-    private CollisionShape2D _rockCollision;
-    private double _lastDamageTime;
-    private const float DamageCooldown = 0.5f;
-    private const string PlayerGroupName = "player";
-    private const uint StaticBodyLayer = 1 << 0;
+	public override void _Ready()
+	{
+		_bodyCol = GetNode<CollisionShape2D>("CollisionShape2D");
+		_animSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		_damageZone = GetNode<Area2D>("DamageZone"); // 获取伤害区
 
-    public override void _Ready()
-    {
-        _animSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-        _damageZone = GetNode<Area2D>("DamageZone");
-        _rockCollision = GetNode<CollisionShape2D>("CollisionShape2D");
+		_animSprite.AnimationFinished += OnAnimationFinished;
 
-        _animSprite.AnimationFinished += OnAnimationFinished;
-        _animSprite.Play("idle");
+		if (EnableHorizontal)
+			_moveDir = RightFirst ? Vector2.Right : Vector2.Left;
+		else if (EnableVertical)
+			_moveDir = DownFirst ? Vector2.Down : Vector2.Up;
 
-        InitFirstMoveDirection();
-        GD.Print("[RockHead] 初始化完成，初始方向: " + _currentMoveDir);
-    }
+		_animSprite.Play("idle");
+	}
 
-    public override void _PhysicsProcess(double delta)
-    {
-        if (_currentState == MoveState.HitPause)
-        {
-            _hitAnimTimer += (float)delta;
-            if (_hitAnimTimer >= HitAnimTimeout)
-            {
-                GD.PrintErr("[RockHead] 动画超时强制恢复");
-                ForceRecoverFromHit();
-            }
-            return;
-        }
+	public override void _PhysicsProcess(double delta)
+	{
+		if (_damageCooldown > 0) _damageCooldown -= (float)delta;
+		if (_isPlayingHitAnim) return;
 
-        float moveDistance = MoveSpeed * (float)delta;
-        Vector2 moveDelta = _currentMoveDir * moveDistance;
+		_blinkTimer += (float)delta;
+		if (_blinkTimer >= BlinkInterval && _animSprite.Animation == "idle")
+		{
+			_blinkTimer = 0f;
+			_animSprite.Play("blink");
+		}
 
-        bool willHitWall = CheckWillHitWall(moveDelta);
-        if (willHitWall)
-        {
-            GD.Print("[RockHead] 检测到撞墙，触发动画");
-            TriggerHitAnimation();
-            return;
-        }
+		Vector2 motion = _moveDir * MoveSpeed * (float)delta;
+		KinematicCollision2D collision = MoveAndCollide(motion);
 
-        GlobalPosition += moveDelta;
+		// 【核心逻辑：完全按照你的思路】
+		// 如果 collision != null，说明箱子撞墙停下了
+		if (collision != null)
+		{
+			// 撞墙瞬间，检查伤害区内有没有玩家
+			CheckDamageOnHitWall();
+			TriggerHitAnimation();
+		}
+	}
 
-        if (_animSprite.Animation == "idle")
-        {
-            _blinkTimer += (float)delta;
-            if (_blinkTimer >= BlinkInterval)
-            {
-                _blinkTimer = 0f;
-                _animSprite.Play("blink");
-            }
-        }
+	#region 【极简】你的思路实现
+	private void CheckDamageOnHitWall()
+	{
+		if (_damageCooldown > 0 || _damageZone == null) return;
 
-        if (Time.GetTicksMsec() - _lastDamageTime < DamageCooldown * 1000) return;
-        foreach (var body in _damageZone.GetOverlappingBodies())
-        {
-            if (!body.IsInGroup(PlayerGroupName) || body is not Player player) continue;
-            if (IsPlayerSqueezed(player))
-            {
-                player.TakeDamage(1);
-                _lastDamageTime = Time.GetTicksMsec();
-                break;
-            }
-        }
-    }
+		// 遍历伤害区内的玩家
+		foreach (Node2D body in _damageZone.GetOverlappingBodies())
+		{
+			if (!body.IsInGroup(PlayerGroup) || body is not Player player) continue;
 
-    #region 核心方向逻辑（永不卡死）
-    private void InitFirstMoveDirection()
-    {
-        if (EnableHorizontal && EnableVertical)
-        {
-            // 双轴模式：先按RightFirst选横向，选完立刻检查能不能走，不能走就反向
-            _currentMoveDir = RightFirst ? Vector2.Right : Vector2.Left;
-            if (CheckWillHitWall(_currentMoveDir * 10f)) // 预判10像素
-            {
-                _currentMoveDir = -_currentMoveDir; // 优先方向有墙，直接反向
-            }
-        }
-        else if (EnableHorizontal)
-        {
-            _currentMoveDir = RightFirst ? Vector2.Right : Vector2.Left;
-        }
-        else if (EnableVertical)
-        {
-            _currentMoveDir = DownFirst ? Vector2.Down : Vector2.Up;
-        }
-    }
+			// 【满足条件】箱子撞墙了 + 玩家在前方伤害区内 = 被夹住了
+			player.TakeDamage(1);
+			_damageCooldown = DamageCooldownTime;
+			GD.Print("[RockHead] 撞墙夹住玩家，造成伤害");
+			break;
+		}
+	}
+	#endregion
 
-    // 【核心修复】撞墙后选方向：先试优先方向，有墙就自动试反方向
-    private void SwitchDirectionByRule()
-    {
-        bool isCurrentlyHorizontal = Mathf.Abs(_currentMoveDir.X) > Mathf.Abs(_currentMoveDir.Y);
+	#region 动画控制
+	private void TriggerHitAnimation()
+	{
+		_isPlayingHitAnim = true;
+		_blinkTimer = 0f;
+		bool isHorizontal = Mathf.Abs(_moveDir.X) > 0;
+		_animSprite.Play(isHorizontal ? "horizon_hit" : "vertical_hit");
+	}
 
-        if (EnableHorizontal && EnableVertical)
-        {
-            Vector2 preferredDir;
-            Vector2 fallbackDir;
+	private void OnAnimationFinished()
+	{
+		StringName anim = _animSprite.Animation;
+		if (anim == "horizon_hit" || anim == "vertical_hit")
+		{
+			SwitchDirection();
+			_isPlayingHitAnim = false;
+			_animSprite.Play("idle");
+		}
+		else if (anim == "blink")
+		{
+			_animSprite.Play("idle");
+		}
+	}
+	#endregion
 
-            if (isCurrentlyHorizontal)
-            {
-                // 刚才是横向撞墙 → 切换垂直方向
-                preferredDir = DownFirst ? Vector2.Down : Vector2.Up;
-                fallbackDir = -preferredDir;
-            }
-            else
-            {
-                // 刚才是垂直撞墙 → 切换横向方向
-                preferredDir = RightFirst ? Vector2.Right : Vector2.Left;
-                fallbackDir = -preferredDir;
-            }
+	#region 移动逻辑（永动保证）
+	private void SwitchDirection()
+	{
+		if (EnableHorizontal && !EnableVertical) { _moveDir = -_moveDir; return; }
+		if (EnableVertical && !EnableHorizontal) { _moveDir = -_moveDir; return; }
 
-            // 【关键】先试优先方向，能走就走，不能走就走反方向
-            if (!CheckWillHitWall(preferredDir * 10f))
-            {
-                _currentMoveDir = preferredDir;
-            }
-            else
-            {
-                GD.Print("[RockHead] 优先方向有墙，自动走反方向");
-                _currentMoveDir = fallbackDir;
-            }
-        }
-        else if (EnableHorizontal)
-        {
-            _currentMoveDir = -_currentMoveDir;
-        }
-        else if (EnableVertical)
-        {
-            _currentMoveDir = -_currentMoveDir;
-        }
-        
-        GD.Print("[RockHead] 方向已切换为: " + _currentMoveDir);
-    }
-    #endregion
+		bool isHorizontal = Mathf.Abs(_moveDir.X) > 0;
+		Vector2 preferredDir = isHorizontal ? (DownFirst ? Vector2.Down : Vector2.Up) : (RightFirst ? Vector2.Right : Vector2.Left);
+		Vector2 fallbackDir = -preferredDir;
+		_moveDir = !CheckWillHitWall(preferredDir * 10f) ? preferredDir : fallbackDir;
+	}
 
-    #region 碰撞检测
-    private bool CheckWillHitWall(Vector2 moveDelta)
-    {
-        if (_rockCollision == null || _rockCollision.Shape == null) return false;
-
-        var spaceState = GetWorld2D().DirectSpaceState;
-        Transform2D targetTransform = _rockCollision.GlobalTransform.Translated(moveDelta);
-
-        var query = new PhysicsShapeQueryParameters2D
-        {
-            Shape = _rockCollision.Shape,
-            Transform = targetTransform,
-            CollisionMask = StaticBodyLayer,
-            Margin = 1f,
-            Exclude = new Godot.Collections.Array<Rid> { GetRid() }
-        };
-
-        return spaceState.IntersectShape(query).Count > 0;
-    }
-    #endregion
-
-    #region 动画控制
-    private void TriggerHitAnimation()
-    {
-        _currentState = MoveState.HitPause;
-        _hitAnimTimer = 0f;
-        _blinkTimer = 0f;
-
-        if (Mathf.Abs(_currentMoveDir.X) > Mathf.Abs(_currentMoveDir.Y))
-            _animSprite.Play("horizon_hit");
-        else
-            _animSprite.Play("vertical_hit");
-    }
-
-    private void OnAnimationFinished()
-    {
-        StringName finishedAnim = _animSprite.Animation;
-        if (finishedAnim == "horizon_hit" || finishedAnim == "vertical_hit")
-        {
-            SwitchDirectionByRule();
-            _currentState = MoveState.Normal;
-            _animSprite.Play("idle");
-        }
-        else if (finishedAnim == "blink" || finishedAnim == "idle")
-        {
-            if (_currentState == MoveState.Normal)
-                _animSprite.Play("idle");
-        }
-    }
-
-    private void ForceRecoverFromHit()
-    {
-        SwitchDirectionByRule();
-        _currentState = MoveState.Normal;
-        _animSprite.Play("idle");
-    }
-    #endregion
-
-    #region 伤害检测
-    private bool IsPlayerSqueezed(Player player)
-    {
-        var playerCol = player.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
-        if (playerCol == null || _rockCollision == null) return false;
-
-        var space = GetWorld2D().DirectSpaceState;
-
-        var staticQuery = new PhysicsShapeQueryParameters2D
-        {
-            Shape = playerCol.Shape,
-            Transform = playerCol.GlobalTransform,
-            CollisionMask = StaticBodyLayer,
-            Margin = 2f,
-            Exclude = new Godot.Collections.Array<Rid> { player.GetRid(), GetRid() }
-        };
-        bool hitStatic = space.IntersectShape(staticQuery).Count > 0;
-
-        var rockQuery = new PhysicsShapeQueryParameters2D
-        {
-            Shape = _rockCollision.Shape,
-            Transform = _rockCollision.GlobalTransform,
-            CollisionMask = 1 << 1,
-            Margin = 2f,
-            Exclude = new Godot.Collections.Array<Rid> { GetRid() }
-        };
-        bool hitRock = space.IntersectShape(rockQuery).Count > 0;
-
-        return hitStatic && hitRock;
-    }
-    #endregion
+	private bool CheckWillHitWall(Vector2 delta)
+	{
+		if (_bodyCol?.Shape == null) return false;
+		var space = GetWorld2D().DirectSpaceState;
+		var query = new PhysicsShapeQueryParameters2D
+		{
+			Shape = _bodyCol.Shape,
+			Transform = _bodyCol.GlobalTransform.Translated(delta),
+			CollisionMask = 1 << 0,
+			Exclude = new Godot.Collections.Array<Rid> { GetRid() }
+		};
+		return space.IntersectShape(query).Count > 0;
+	}
+	#endregion
 }

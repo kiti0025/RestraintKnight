@@ -124,15 +124,13 @@ animations = [{
 size = Vector2(30, 30)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ndil2"]
-size = Vector2(34, 20)
+size = Vector2(43, 45)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_q514l"]
-size = Vector2(21, 34)
-
-[node name="RockHead" type="AnimatableBody2D" unique_id=5120262]
+[node name="RockHead" type="AnimatableBody2D" unique_id=1700461864]
 collision_layer = 128
-collision_mask = 2
+sync_to_physics = false
 script = ExtResource("1_q514l")
+HorizontalCheckDistance = 2.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=518288414]
 sprite_frames = SubResource("SpriteFrames_yvgni")
@@ -142,14 +140,10 @@ autoplay = "idle"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=256683814]
 shape = SubResource("RectangleShape2D_30l56")
 
-[node name="DamageZone_H" type="Area2D" parent="." unique_id=320425841]
+[node name="DamageZone" type="Area2D" parent="." unique_id=320425841]
+collision_layer = 128
+collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageZone_H" unique_id=994507181]
-position = Vector2(0, 1)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageZone" unique_id=994507181]
+position = Vector2(-0.5, -0.5)
 shape = SubResource("RectangleShape2D_ndil2")
-
-[node name="DamageZone_V" type="Area2D" parent="." unique_id=780255631]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageZone_V" unique_id=1175036701]
-position = Vector2(0.5, 0)
-shape = SubResource("RectangleShape2D_q514l")

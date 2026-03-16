@@ -128,7 +128,7 @@ size = Vector2(41, 41)
 
 [node name="SpikeHead" type="AnimatableBody2D" unique_id=5120262]
 collision_layer = 128
-collision_mask = 2
+sync_to_physics = false
 script = ExtResource("1_q514l")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=518288414]
@@ -140,6 +140,8 @@ autoplay = "idle"
 shape = SubResource("RectangleShape2D_30l56")
 
 [node name="DamageZone" type="Area2D" parent="." unique_id=320425841]
+collision_layer = 128
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageZone" unique_id=994507181]
 position = Vector2(0.5, 0.5)

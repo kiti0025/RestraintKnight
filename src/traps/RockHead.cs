@@ -87,29 +87,55 @@ public partial class RockHead : AnimatableBody2D
 	/// <summary>
 	/// 极简判定：玩家是否在箱子的移动方向上（被推的那一侧）
 	/// </summary>
+	/// 	private bool IsPlayerInThePushingDirection(Player player)
+	// {
+	// 	var playerCol = player.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+	// 	if (playerCol?.Shape == null || _bodyCol?.Shape == null) return false;
+
+	// 	// 获取箱子和玩家的世界边界
+	// 	Rect2 boxBounds = _bodyCol.Shape.GetRect();
+	// 	Rect2 playerBounds = playerCol.Shape.GetRect();
+	// 	boxBounds.Position = _bodyCol.GlobalPosition - boxBounds.Size / 2;
+	// 	playerBounds.Position = playerCol.GlobalPosition - playerBounds.Size / 2;
+
+	// 	bool isHorizontal = Mathf.Abs(_moveDir.X) > 0;
+
+	// 	if (isHorizontal)
+	// 	{
+	// 		// 水平撞墙：玩家和箱子的Y轴必须有重叠（说明在左右侧，不是在上下方）
+	// 		return boxBounds.Intersects(playerBounds);
+	// 	}
+	// 	else
+	// 	{
+	// 		// 垂直撞墙：玩家和箱子的X轴必须有重叠（说明在上下侧，不是在左右侧）
+	// 		return boxBounds.Intersects(playerBounds);
+	// 	}
+	// }
+	/// <summary>
+	/// 【真正修复版】玩家必须在箱子移动方向的正前方 + 边界重叠
+	/// </summary>
 	private bool IsPlayerInThePushingDirection(Player player)
 	{
 		var playerCol = player.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
 		if (playerCol?.Shape == null || _bodyCol?.Shape == null) return false;
 
-		// 获取箱子和玩家的世界边界
+		// 1. 获取箱子和玩家的世界边界
 		Rect2 boxBounds = _bodyCol.Shape.GetRect();
 		Rect2 playerBounds = playerCol.Shape.GetRect();
 		boxBounds.Position = _bodyCol.GlobalPosition - boxBounds.Size / 2;
 		playerBounds.Position = playerCol.GlobalPosition - playerBounds.Size / 2;
 
-		bool isHorizontal = Mathf.Abs(_moveDir.X) > 0;
+		// 2. 【第一重过滤】边界必须重叠
+		if (!boxBounds.Intersects(playerBounds)) return false;
 
-		if (isHorizontal)
-		{
-			// 水平撞墙：玩家和箱子的Y轴必须有重叠（说明在左右侧，不是在上下方）
-			return boxBounds.Intersects(playerBounds);
-		}
-		else
-		{
-			// 垂直撞墙：玩家和箱子的X轴必须有重叠（说明在上下侧，不是在左右侧）
-			return boxBounds.Intersects(playerBounds);
-		}
+		// 3. 【第二重过滤】玩家必须在箱子移动方向的正前方
+		Vector2 boxCenter = _bodyCol.GlobalPosition;
+		Vector2 playerCenter = playerCol.GlobalPosition;
+		Vector2 boxToPlayer = (playerCenter - boxCenter).Normalized();
+		float dot = boxToPlayer.Dot(_moveDir.Normalized());
+
+		// 点积 > 0.7，说明玩家在移动方向的正前方（不是顶上/侧面）
+		return dot > 0.7f;
 	}
 	#endregion
 

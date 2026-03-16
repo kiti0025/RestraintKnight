@@ -87,13 +87,15 @@ size = Vector2(21, 3)
 size = Vector2(19, 3)
 
 [node name="Trampoline" type="StaticBody2D" unique_id=2047662851 node_paths=PackedStringArray("_bounceTriggerArea", "_animatedSprite")]
+collision_layer = 64
+collision_mask = 0
 script = ExtResource("1_kyg5h")
 _bounceTriggerArea = NodePath("Area2D")
 _animatedSprite = NodePath("AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=831476707]
 sprite_frames = SubResource("SpriteFrames_k0et7")
-animation = &"jump"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1885213691]
@@ -101,6 +103,9 @@ position = Vector2(-0.5, 5.5)
 shape = SubResource("RectangleShape2D_d21dk")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1263072649]
+collision_layer = 64
+collision_mask = 2
+monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=177216973]
 position = Vector2(-0.5, 4.5)

@@ -181,6 +181,8 @@ animations = [{
 radius = 6.0827627
 
 [node name="Kiwi" type="Area2D" unique_id=1018921506]
+collision_layer = 8
+collision_mask = 2
 metadata/FruitScore = 320
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928192845]

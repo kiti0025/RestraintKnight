@@ -181,6 +181,8 @@ animations = [{
 radius = 7.071068
 
 [node name="Pineapple" type="Area2D" unique_id=1681862408]
+collision_layer = 8
+collision_mask = 2
 metadata/FruitScore = 410
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1543823512]

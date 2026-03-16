@@ -19,6 +19,7 @@ public void ShowGameOver()
 
 	private void OnRestartButtonPressed()
 	{
+		Spikes.ResetAll();//重载场景前先重置所有尖刺的静态状态
 		GetTree().ReloadCurrentScene();
 	}
 }

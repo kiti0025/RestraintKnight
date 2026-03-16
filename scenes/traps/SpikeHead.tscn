@@ -127,6 +127,8 @@ size = Vector2(30, 30)
 size = Vector2(41, 41)
 
 [node name="SpikeHead" type="AnimatableBody2D" unique_id=5120262]
+collision_layer = 128
+collision_mask = 2
 script = ExtResource("1_q514l")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=518288414]

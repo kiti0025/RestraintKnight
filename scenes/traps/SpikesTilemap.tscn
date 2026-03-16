@@ -1,19 +1,18 @@
 [gd_scene format=3 uid="uid://bta21ywrjteug"]
 
-[ext_resource type="Texture2D" uid="uid://bdic3ctnlkak4" path="res://assets/sprites/Free/Traps/Spikes/Idle.png" id="1_u3520"]
-[ext_resource type="Script" uid="uid://dyk2ko7h4v0yp" path="res://src/traps/SpikesTilemap.cs" id="2_nvglg"]
+[ext_resource type="PackedScene" uid="uid://dfbr5xuutq7nu" path="res://scenes/traps/Spikes.tscn" id="1_nvglg"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nvglg"]
-texture = ExtResource("1_u3520")
-0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_nvglg"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_eycop"]
+resource_name = "spikes"
+scenes/1/scene = ExtResource("1_nvglg")
 
 [sub_resource type="TileSet" id="TileSet_eycop"]
-physics_layer_0/collision_layer = 2
-physics_layer_0/collision_mask = 0
-sources/0 = SubResource("TileSetAtlasSource_nvglg")
+physics_layer_0/collision_layer = 128
+physics_layer_0/collision_mask = 2
+physics_layer_0/physics_material = SubResource("PhysicsMaterial_nvglg")
+sources/1 = SubResource("TileSetScenesCollectionSource_eycop")
 
 [node name="SpikesTilemap" type="TileMapLayer" unique_id=44915192]
 tile_set = SubResource("TileSet_eycop")
-script = ExtResource("2_nvglg")
-_damageInterval = 0.0

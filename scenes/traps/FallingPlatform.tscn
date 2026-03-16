@@ -46,6 +46,8 @@ size = Vector2(30, 8)
 size = Vector2(28, 10)
 
 [node name="FallingPlatform" type="StaticBody2D" unique_id=951235340]
+collision_layer = 64
+collision_mask = 0
 script = ExtResource("1_xu0yy")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=255758917]
@@ -57,6 +59,8 @@ autoplay = "on"
 shape = SubResource("RectangleShape2D_v8wfp")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1243473211]
+collision_layer = 64
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1736674237]
 position = Vector2(0, -2)

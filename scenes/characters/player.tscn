@@ -467,6 +467,8 @@ height = 24.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1523293338 groups=["player"]]
 z_index = 1
+collision_layer = 2
+collision_mask = 193
 script = ExtResource("1_jk2m4")
 metadata/_edit_lock_ = true
 

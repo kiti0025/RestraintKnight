@@ -329,6 +329,7 @@ use_texture_padding = false
 
 [resource]
 physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 1
 terrain_set_0/terrain_0/name = "border_gray"
 terrain_set_0/terrain_0/color = Color(1, 1, 1, 1)

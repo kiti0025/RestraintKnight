@@ -181,6 +181,8 @@ animations = [{
 radius = 6.0
 
 [node name="Orange" type="Area2D" unique_id=34008531]
+collision_layer = 8
+collision_mask = 2
 metadata/FruitScore = 230
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1100195965]

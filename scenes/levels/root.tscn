@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://bjanaet67mvb7" path="res://scenes/traps/Trampoline.tscn" id="10_ovq5d"]
 [ext_resource type="PackedScene" uid="uid://bta21ywrjteug" path="res://scenes/traps/SpikesTilemap.tscn" id="11_6ec0s"]
 [ext_resource type="PackedScene" uid="uid://pbblc70i0cwd" path="res://scenes/items/FruitsTilemap.tscn" id="12_pp1d3"]
+[ext_resource type="PackedScene" uid="uid://m4e5jpjnngfj" path="res://scenes/traps/SpikeHead.tscn" id="12_ta7m0"]
 [ext_resource type="PackedScene" uid="uid://1qedmcqgcnft" path="res://scenes/traps/RockHead.tscn" id="13_cym5i"]
 
 [node name="Root" type="Node2D" unique_id=1508318706]
@@ -180,8 +181,11 @@ position = Vector2(62, -141)
 [node name="SpikesTilemap" parent="trips" unique_id=44915192 instance=ExtResource("11_6ec0s")]
 tile_map_data = PackedByteArray("AAAGAP3/AQAAAAAAAQAHAP3/AQAAAAAAAQAIAP3/AQAAAAAAAQAJAP3/AQAAAAAAAQAKAP3/AQAAAAAAAQAEAPv/AQAAAAAAAQAFAPv/AQAAAAAAAQAcAP3/AQAAAAAAAQAdAP3/AQAAAAAAAQAeAP3/AQAAAAAAAQAfAP3/AQAAAAAAAQAgAP3/AQAAAAAAAQAhAP3/AQAAAAAAAQAiAP3/AQAAAAAAAQAjAP3/AQAAAAAAAQAkAP3/AQAAAAAAAQA=")
 
-[node name="RockHead" parent="trips" unique_id=1700461864 instance=ExtResource("13_cym5i")]
-position = Vector2(845, -72)
+[node name="SpikeHead_1" parent="trips" unique_id=5120262 instance=ExtResource("12_ta7m0")]
+position = Vector2(854, -80)
+
+[node name="RockHead_1" parent="trips" unique_id=1700461864 instance=ExtResource("13_cym5i")]
+position = Vector2(612, -167)
 
 [node name="FruitsTilemap" parent="." unique_id=318655951 instance=ExtResource("12_pp1d3")]
 position = Vector2(0, -1)

@@ -8,43 +8,50 @@ public partial class SpikeHead : AnimatableBody2D
 	[Export] public bool RightFirst = true;
 	[Export] public bool DownFirst = true;
 
-	// 动画设置
-	[Export] public float BlinkInterval = 3f; // 眨眼间隔
+	[Export] public float BlinkInterval = 3f;
 
-	// 内部变量
+	// 持续掉血设置
+	[Export] public float DamageInterval = 0.4f;   // 每隔多久掉一次血
+	[Export] public int DamagePerHit = 1;         // 每次掉多少血
+
 	private Vector2 _moveDir;
 	private CollisionShape2D _bodyCol;
 	private AnimatedSprite2D _animSprite;
-	
-	// 动画状态
+	private Area2D _damageZone;
+
 	private bool _isPlayingHitAnim = false;
 	private float _blinkTimer = 0f;
+	private float _damageTimer = 0f;  // 持续掉血计时器
+	private Player _currentPlayer;    // 正在接触的玩家
+
+	private const string PlayerGroup = "player";
 
 	public override void _Ready()
 	{
 		_bodyCol = GetNode<CollisionShape2D>("CollisionShape2D");
 		_animSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		_damageZone = GetNode<Area2D>("DamageZone");
 
-		// 连接动画结束信号
+		// 接触开始 / 接触结束
+		_damageZone.BodyEntered += OnPlayerEnter;
+		_damageZone.BodyExited += OnPlayerExit;
+
 		_animSprite.AnimationFinished += OnAnimationFinished;
 
-		// 初始化方向
 		if (EnableHorizontal)
 			_moveDir = RightFirst ? Vector2.Right : Vector2.Left;
 		else if (EnableVertical)
 			_moveDir = DownFirst ? Vector2.Down : Vector2.Up;
 
-		// 初始播放待机动画
 		_animSprite.Play("idle");
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		// 如果正在播放碰撞动画，暂停移动逻辑
 		if (_isPlayingHitAnim)
 			return;
 
-		// 眨眼计时
+		// 眨眼逻辑
 		_blinkTimer += (float)delta;
 		if (_blinkTimer >= BlinkInterval && _animSprite.Animation == "idle")
 		{
@@ -52,24 +59,52 @@ public partial class SpikeHead : AnimatableBody2D
 			_animSprite.Play("blink");
 		}
 
-		// 物理移动
+		// 【核心】持续掉血
+		if (_currentPlayer != null)
+		{
+			_damageTimer += (float)delta;
+			if (_damageTimer >= DamageInterval)
+			{
+				_currentPlayer.TakeDamage(DamagePerHit);
+				_damageTimer = 0;
+			}
+		}
+
+		// 移动
 		Vector2 motion = _moveDir * MoveSpeed * (float)delta;
 		KinematicCollision2D collision = MoveAndCollide(motion);
 
-		// 撞墙触发动画
 		if (collision != null)
 		{
 			TriggerHitAnimation();
 		}
 	}
 
+	#region 接触开始 / 结束
+	private void OnPlayerEnter(Node2D body)
+	{
+		if (body.IsInGroup(PlayerGroup) && body is Player player)
+		{
+			_currentPlayer = player;
+			_damageTimer = 0; // 刚碰到立刻掉一次血
+			_currentPlayer.TakeDamage(DamagePerHit);
+		}
+	}
+
+	private void OnPlayerExit(Node2D body)
+	{
+		if (body == _currentPlayer)
+		{
+			_currentPlayer = null;
+		}
+	}
+	#endregion
+
 	#region 动画控制
 	private void TriggerHitAnimation()
 	{
 		_isPlayingHitAnim = true;
-		_blinkTimer = 0f; // 重置眨眼计时
-
-		// 根据移动方向播放对应碰撞动画
+		_blinkTimer = 0f;
 		bool isHorizontal = Mathf.Abs(_moveDir.X) > 0;
 		_animSprite.Play(isHorizontal ? "horizon_hit" : "vertical_hit");
 	}
@@ -77,15 +112,12 @@ public partial class SpikeHead : AnimatableBody2D
 	private void OnAnimationFinished()
 	{
 		StringName anim = _animSprite.Animation;
-
-		// 碰撞动画播完：转向 + 恢复待机
 		if (anim == "horizon_hit" || anim == "vertical_hit")
 		{
 			SwitchDirection();
 			_isPlayingHitAnim = false;
 			_animSprite.Play("idle");
 		}
-		// 眨眼动画播完：回到待机
 		else if (anim == "blink")
 		{
 			_animSprite.Play("idle");
@@ -93,26 +125,15 @@ public partial class SpikeHead : AnimatableBody2D
 	}
 	#endregion
 
-	#region 移动逻辑（永动保证）
+	#region 移动逻辑
 	private void SwitchDirection()
 	{
-		// 单轴模式：直接反弹
-		if (EnableHorizontal && !EnableVertical)
-		{
-			_moveDir = -_moveDir;
-			return;
-		}
-		if (EnableVertical && !EnableHorizontal)
-		{
-			_moveDir = -_moveDir;
-			return;
-		}
+		if (EnableHorizontal && !EnableVertical) { _moveDir = -_moveDir; return; }
+		if (EnableVertical && !EnableHorizontal) { _moveDir = -_moveDir; return; }
 
-		// 双轴模式：智能切换
 		bool isHorizontal = Mathf.Abs(_moveDir.X) > 0;
 		Vector2 preferredDir = isHorizontal ? (DownFirst ? Vector2.Down : Vector2.Up) : (RightFirst ? Vector2.Right : Vector2.Left);
 		Vector2 fallbackDir = -preferredDir;
-
 		_moveDir = !CheckWillHitWall(preferredDir * 10f) ? preferredDir : fallbackDir;
 	}
 

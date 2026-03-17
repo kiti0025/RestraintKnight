@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bcbn6jufbonvl"]
+[gd_scene format=3 uid="uid://cxfqm35av8yaa"]
 
 [ext_resource type="Script" uid="uid://bxl5r3w133b76" path="res://src/characters/Player.cs" id="1_jk2m4"]
 [ext_resource type="Texture2D" uid="uid://2fgn1k5o0v3m" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Hit (32x32).png" id="3_7vyk4"]
@@ -488,6 +488,7 @@ shape = SubResource("CapsuleShape2D_xhtjm")
 metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2030668559]
+zoom = Vector2(1.5, 1.5)
 limit_smoothed = true
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true

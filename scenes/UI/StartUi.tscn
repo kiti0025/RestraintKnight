@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://m7lus6rp5ufe"]
+
+[ext_resource type="Script" uid="uid://dq7pqg3hrpxom" path="res://src/UI/StartUi.cs" id="1_gqw8a"]
+[ext_resource type="AudioStream" uid="uid://bbpumd68a1wh4" path="res://assets/sounds/BGM_UI.wav" id="2_73q1l"]
+[ext_resource type="AudioStream" uid="uid://csstxwtfo32rd" path="res://assets/sounds/click.wav" id="3_e72vu"]
+
+[node name="StartUi" type="CanvasLayer" unique_id=1103377545]
+script = ExtResource("1_gqw8a")
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=207565298]
+stream = ExtResource("2_73q1l")
+
+[node name="SFXPlayer" type="AudioStreamPlayer" parent="." unique_id=1984651981]
+stream = ExtResource("3_e72vu")
+
+[node name="Background" type="Panel" parent="." unique_id=1757811169]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="UILayout" type="VBoxContainer" parent="Background" unique_id=142777684]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -468.5
+offset_top = -181.5
+offset_right = 468.5
+offset_bottom = 181.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 35
+
+[node name="Title" type="Label" parent="Background/UILayout" unique_id=1684032996]
+layout_mode = 2
+theme_override_font_sizes/font_size = 120
+text = " restraint knight"
+horizontal_alignment = 1
+
+[node name="StartButton" type="Button" parent="Background/UILayout" unique_id=1412148228]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "开始游戏"
+
+[node name="SettingButton" type="Button" parent="Background/UILayout" unique_id=1542408503]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "设 置"
+
+[node name="ExitButton" type="Button" parent="Background/UILayout" unique_id=337753687]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "退出游戏
+"

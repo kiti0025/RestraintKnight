@@ -511,6 +511,7 @@ RollingSfx = ExtResource("5_8el8x")
 WallSlideSfx = ExtResource("6_dhihs")
 
 [node name="LoopSfxPlayer" type="AudioStreamPlayer2D" parent="PlayerAudioComponent" unique_id=1144463580]
+volume_db = 2.0
 bus = &"PlayerSFX"
 
 [node name="OneShotSfxPlayer" type="AudioStreamPlayer2D" parent="PlayerAudioComponent" unique_id=2108834050]

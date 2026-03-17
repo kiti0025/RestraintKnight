@@ -24,4 +24,5 @@ CollectSound = ExtResource("6_cbwo6")
 CollectSfxPlayer = NodePath("AudioStreamPlayer2D")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=263695298]
+volume_db = 2.0
 bus = &"PlayerSFX"

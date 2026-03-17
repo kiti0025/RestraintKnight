@@ -5,6 +5,12 @@ public partial class Root : Node2D
     [Export] private TileMapLayer _tileMapLayerBorder; 
     [Export] private Camera2D _camera2d;
 
+    // ====================== 新增：BGM配置 ======================
+    [ExportGroup("音频配置")]
+    [Export] public AudioStream BgmStream;          // BGM音频资源
+    [Export] public AudioStreamPlayer2D BgmPlayer;  // 静态BGM播放器节点
+    // ==========================================================
+
     public override void _Ready()
     {
         if (_tileMapLayerBorder == null)
@@ -35,5 +41,16 @@ public partial class Root : Node2D
         _camera2d.LimitRight = (int)mapRight;
         _camera2d.LimitBottom = (int)mapBottom;
         _camera2d.ResetSmoothing();
+
+        // ====================== 新增：初始化并播放BGM ======================
+        // 自动获取场景中的BGM播放器节点（如果没手动拖拽）
+        BgmPlayer ??= GetNodeOrNull<AudioStreamPlayer2D>("BGM");
+        
+        if (BgmStream != null && BgmPlayer != null)
+        {
+            BgmPlayer.Stream = BgmStream;
+            BgmPlayer.Play();             // 开始播放
+        }
+        // ==================================================================
     }
 }

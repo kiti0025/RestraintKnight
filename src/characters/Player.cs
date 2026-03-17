@@ -30,9 +30,10 @@ public partial class Player : CharacterBody2D
 
 	[ExportGroup("Node Refs")]
 	[Export] public AnimatedSprite2D PlayerSprite;
+	
 	[ExportGroup("Health")]
 	[Export] public int MaxHealth = 3; 
-	[Export] public float InvincibleDuration = 1f; // 受伤后无敌时间（秒）
+	[Export] public float InvincibleDuration = 1f;
 	#endregion
 
 	#region Runtime State
@@ -47,21 +48,26 @@ public partial class Player : CharacterBody2D
 	private int _currentJumpCount;
 	private const int MaxJumpCount = 2;
 	private bool _isOnWall;
-	private Vector2 _lastWallJumpNormal; // 记录最近一次蹬墙的墙法线
+	private Vector2 _lastWallJumpNormal;
 	private string _currentAnimName;
 	private int _currentHealth;
 	private bool _isInvincible;
 	private float _invincibleTimer;
 	#endregion
 
-	[Signal]
-    public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
-
+	#region 事件信号（给音效、UI等外部模块监听）
+	[Signal] public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
+	[Signal] public delegate void OnJumpedEventHandler();
+	[Signal] public delegate void OnRollTriggeredEventHandler();
+	[Signal] public delegate void OnTakeDamageEventHandler();
+	[Signal] public delegate void OnStateChangedEventHandler(PlayerState oldState, PlayerState newState);
+	#endregion
 
 	public override void _Ready()
 	{
 		if (PlayerSprite == null)
 			PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		
 		_currentHealth = MaxHealth; 
 		EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
 	}
@@ -70,6 +76,7 @@ public partial class Player : CharacterBody2D
 	{
 		float deltaTime = (float)delta;
 
+		// 无敌时间处理
 		if (_isInvincible)
 		{
 			_invincibleTimer -= deltaTime;
@@ -81,7 +88,6 @@ public partial class Player : CharacterBody2D
 
 		_isOnFloor = IsOnFloor();
 		_isOnWall = IsOnWall();
-
 		_velocity = Velocity;
 
 		HandleMovementInput();
@@ -152,30 +158,44 @@ public partial class Player : CharacterBody2D
 		{
 			if (_currentState == PlayerState.WallSlide)
 			{
+				// 墙跳逻辑
 				_velocity.X = -_faceDirection * 800f; 
 				_velocity.Y = JumpForce; 
 				_currentJumpCount = MaxJumpCount; 
 				PlayerSprite.FlipH = -_faceDirection < 0;
 				_lastWallJumpNormal = GetWallNormal();
+				
+				// 只发事件，不处理音效
+				EmitSignal(SignalName.OnJumped);
 			}
 			else if (_currentJumpCount < MaxJumpCount)
 			{
+				// 普通跳跃/二段跳
 				_velocity.Y = JumpForce;
 				_currentJumpCount++;
+				
+				// 只发事件，不处理音效
+				EmitSignal(SignalName.OnJumped);
 			}
 		}
 	}
 
 	private void UpdateBaseState()
 	{
+		// 受伤硬直期间不更新状态
 		if (_currentState == PlayerState.Hit && PlayerSprite.IsPlaying())
-            return;
+			return;
 
 		bool hasHorizontalInput = Mathf.Abs(_moveInput.X) > InputDeadzone;
 		bool isRollingTriggered = _currentState == PlayerState.Rolling && PlayerSprite.IsPlaying() 
 								|| _isMoveDownJustPressed && hasHorizontalInput 
 								|| _isMoveDownPressed && _isHorizontalJustPressed;
 
+		// 记录旧状态，计算新状态
+		PlayerState oldState = _currentState;
+		PlayerState newState;
+
+		// 状态机核心逻辑
 		if (!_isOnFloor) 
 		{
 			if (Velocity.Y > 0)
@@ -183,20 +203,33 @@ public partial class Player : CharacterBody2D
 				Vector2 currentWallNormal = GetWallNormal();
 				bool isSameWallAsLastJump = _lastWallJumpNormal != Vector2.Zero && currentWallNormal == _lastWallJumpNormal;
 				bool isPressingTowardsWall = Mathf.Abs(_moveInput.X) > InputDeadzone && (currentWallNormal.X * _moveInput.X < 0);
-				_currentState = (_isOnWall && !isSameWallAsLastJump && isPressingTowardsWall) ? PlayerState.WallSlide : PlayerState.Fall;
+				newState = (_isOnWall && !isSameWallAsLastJump && isPressingTowardsWall) ? PlayerState.WallSlide : PlayerState.Fall;
 			}
 			else
 			{
-				_currentState = _currentJumpCount == 1 ?  PlayerState.Jump : PlayerState.jump_double;
+				newState = _currentJumpCount == 1 ?  PlayerState.Jump : PlayerState.jump_double;
 			}
 		}
 		else if (isRollingTriggered)
 		{
-			_currentState = PlayerState.Rolling;
+			newState = PlayerState.Rolling;
 		}
 		else
 		{
-			_currentState = hasHorizontalInput ? PlayerState.Running : PlayerState.Idle;
+			newState = hasHorizontalInput ? PlayerState.Running : PlayerState.Idle;
+		}
+
+		// 状态变化时，更新状态+发射事件
+		if (oldState != newState)
+		{
+			_currentState = newState;
+			EmitSignal(SignalName.OnStateChanged, Variant.From(oldState), Variant.From(newState));
+
+			// 翻滚触发事件
+			if (newState == PlayerState.Rolling)
+			{
+				EmitSignal(SignalName.OnRollTriggered);
+			}
 		}
 	}
 
@@ -209,6 +242,8 @@ public partial class Player : CharacterBody2D
 		_invincibleTimer = InvincibleDuration;
 		_currentState = PlayerState.Hit;
 
+		// 只发事件，不处理音效
+		EmitSignal(SignalName.OnTakeDamage);
 		EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
 
 		if (_currentHealth <= 0)
@@ -219,8 +254,8 @@ public partial class Player : CharacterBody2D
 
 	private void HandleDeath()
 	{
-        UiGameOver uiGameOver = GetNodeOrNull<UiGameOver>("/root/Root/PlayerUI/UiGameOver");
-		uiGameOver.ShowGameOver();
+		UiGameOver uiGameOver = GetNodeOrNull<UiGameOver>("/root/Root/PlayerUI/UiGameOver");
+		uiGameOver?.ShowGameOver();
 	}
 
 	private void UpdateAnimation()
@@ -244,5 +279,4 @@ public partial class Player : CharacterBody2D
 			_currentAnimName = targetAnim;
 		}
 	}
-	
 }

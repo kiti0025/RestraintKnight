@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="RestraintKnight"
-run/main_scene="uid://bgwlp6v1kuled"
+run/main_scene="uid://rsbkwtgl451k"
 config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
 config/icon="uid://w8irqp426afm"
+
+[audio]
+
+buses/default_bus_layout="uid://dkgk8w6f6222i"
 
 [display]
 

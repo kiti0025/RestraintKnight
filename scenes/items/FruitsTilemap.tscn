@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cxtkk28ta1qtt" path="res://scenes/items/Kiwi.tscn" id="3_i8mh0"]
 [ext_resource type="Script" uid="uid://cbocihlu15ad8" path="res://src/items/FruitsTilemap.cs" id="3_ov0ir"]
 [ext_resource type="PackedScene" uid="uid://65fyr1edkbqf" path="res://scenes/items/Pineapple.tscn" id="4_cbwo6"]
+[ext_resource type="AudioStream" uid="uid://bo44rkmlerfhg" path="res://assets/sounds/collected.wav" id="6_cbwo6"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_ov0ir"]
 resource_name = "fruits"
@@ -16,6 +17,11 @@ scenes/4/scene = ExtResource("4_cbwo6")
 [sub_resource type="TileSet" id="TileSet_ov0ir"]
 sources/0 = SubResource("TileSetScenesCollectionSource_ov0ir")
 
-[node name="FruitsTilemap" type="TileMapLayer" unique_id=318655951]
+[node name="FruitsTilemap" type="TileMapLayer" unique_id=318655951 node_paths=PackedStringArray("CollectSfxPlayer")]
 tile_set = SubResource("TileSet_ov0ir")
 script = ExtResource("3_ov0ir")
+CollectSound = ExtResource("6_cbwo6")
+CollectSfxPlayer = NodePath("AudioStreamPlayer2D")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=263695298]
+bus = &"PlayerSFX"

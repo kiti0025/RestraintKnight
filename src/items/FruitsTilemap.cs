@@ -6,6 +6,7 @@ public partial class FruitsTilemap : TileMapLayer
     [ExportGroup("全局配置")]
     [Export] public AudioStream CollectSound;
     [Export] public Label ScoreLabel;
+    [Export] public AudioStreamPlayer2D CollectSfxPlayer; // 绑定场景里的静态音效节点
 
     // 配置常量：统一管理元数据键名和默认值，避免硬编码
     private const string MetaKeyScore = "FruitScore";
@@ -14,7 +15,6 @@ public partial class FruitsTilemap : TileMapLayer
 
     private readonly List<Area2D> _spawnedFruits = new List<Area2D>();
     private int _totalScore;
-    private AudioStreamPlayer2D _soundPlayer;
 
     public override void _Ready()
     {
@@ -24,8 +24,11 @@ public partial class FruitsTilemap : TileMapLayer
             ScoreLabel = GetNodeOrNull<Label>("/root/Root/PlayerUI/UiPlayer/ScoreLabel");
         }
 
-        // 2. 初始化音效播放器
-        InitializeSoundPlayer();
+        // 2. 自动获取场景里的静态音效节点（没手动拖也能自动找到）
+        if (CollectSfxPlayer == null)
+        {
+            CollectSfxPlayer = GetNodeOrNull<AudioStreamPlayer2D>("AudioStreamPlayer2D");
+        }
 
         // 3. 初始化分数显示
         UpdateScoreUI();
@@ -35,16 +38,6 @@ public partial class FruitsTilemap : TileMapLayer
 
         // 5. 监听运行时动态生成的水果
         ChildEnteredTree += OnChildEnteredTree;
-    }
-
-    private void InitializeSoundPlayer()
-    {
-        _soundPlayer = new AudioStreamPlayer2D();
-        AddChild(_soundPlayer);
-        if (CollectSound != null)
-        {
-            _soundPlayer.Stream = CollectSound;
-        }
     }
 
     private void RegisterExistingFruits()
@@ -103,10 +96,12 @@ public partial class FruitsTilemap : TileMapLayer
         fruit.SetDeferred("monitoring", false);
         fruit.SetDeferred("monitorable", false);
 
-        // 3. 播放收集音效
-        if (CollectSound != null)
+        // 3. 播放收集音效（用静态节点，稳定可控）
+        if (CollectSound != null && CollectSfxPlayer != null)
         {
-            _soundPlayer.Play();
+            CollectSfxPlayer.Stop(); // 先停掉之前的播放，避免快速收集时音效堆叠
+            CollectSfxPlayer.Stream = CollectSound;
+            CollectSfxPlayer.Play();
         }
 
         // 4. 读取水果专属分数（完全基于元数据）
@@ -135,9 +130,8 @@ public partial class FruitsTilemap : TileMapLayer
         }
         else
         {
-            // 没有收集动画，等音效播完销毁
-            double delay = CollectSound != null ? CollectSound.GetLength() : 0.05;
-            GetTree().CreateTimer(delay).Timeout += fruit.QueueFree;
+            // 没有收集动画，直接销毁
+            fruit.QueueFree();
         }
     }
 

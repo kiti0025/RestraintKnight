@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://rsbkwtgl451k"]
 
 [ext_resource type="Script" uid="uid://bm2027mbqex4x" path="res://src/levels/Root.cs" id="1_6ec0s"]
-[ext_resource type="PackedScene" uid="uid://cxfqm35av8yaa" path="res://scenes/characters/player.tscn" id="2_qecki"]
+[ext_resource type="PackedScene" uid="uid://bo7jdtu7pypky" path="res://scenes/characters/player.tscn" id="2_qecki"]
 [ext_resource type="Texture2D" uid="uid://bquictr5h3sav" path="res://assets/sprites/Free/Background/Pink.png" id="2_tcuo1"]
 [ext_resource type="TileSet" uid="uid://di7vbb7y07u4b" path="res://assets/tilesets/grass.tres" id="3_4hlm0"]
 [ext_resource type="TileSet" uid="uid://ln6yed075lrw" path="res://assets/tilesets/border.tres" id="4_ur0mj"]
@@ -17,8 +17,9 @@
 [ext_resource type="PackedScene" uid="uid://m4e5jpjnngfj" path="res://scenes/traps/SpikeHead.tscn" id="12_ta7m0"]
 [ext_resource type="PackedScene" uid="uid://1qedmcqgcnft" path="res://scenes/traps/RockHead.tscn" id="13_cym5i"]
 
-[node name="Root" type="Node2D" unique_id=1508318706]
+[node name="Root" type="Node2D" unique_id=1508318706 node_paths=PackedStringArray("_tileMapLayerBorder")]
 script = ExtResource("1_6ec0s")
+_tileMapLayerBorder = NodePath("TileMapLayer_border")
 
 [node name="Parallax2D" type="Parallax2D" parent="." unique_id=910641941]
 z_index = -10

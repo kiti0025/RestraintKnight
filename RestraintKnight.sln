@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestraintKnight", "RestraintKnight.csproj", "{4BAB53F8-F61A-4D73-A49C-CAF77287976C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestraintKnight", "RestraintKnight.csproj", "{51F85E12-B88D-4E12-BEAA-E0B5F9DD2825}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,11 +9,11 @@ Global
 	ExportRelease|Any CPU = ExportRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4BAB53F8-F61A-4D73-A49C-CAF77287976C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BAB53F8-F61A-4D73-A49C-CAF77287976C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BAB53F8-F61A-4D73-A49C-CAF77287976C}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{4BAB53F8-F61A-4D73-A49C-CAF77287976C}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
-		{4BAB53F8-F61A-4D73-A49C-CAF77287976C}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
-		{4BAB53F8-F61A-4D73-A49C-CAF77287976C}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{51F85E12-B88D-4E12-BEAA-E0B5F9DD2825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51F85E12-B88D-4E12-BEAA-E0B5F9DD2825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51F85E12-B88D-4E12-BEAA-E0B5F9DD2825}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{51F85E12-B88D-4E12-BEAA-E0B5F9DD2825}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{51F85E12-B88D-4E12-BEAA-E0B5F9DD2825}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{51F85E12-B88D-4E12-BEAA-E0B5F9DD2825}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
 	EndGlobalSection
 EndGlobal

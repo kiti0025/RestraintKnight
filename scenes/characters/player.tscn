@@ -1,13 +1,19 @@
-[gd_scene format=3 uid="uid://cxfqm35av8yaa"]
+[gd_scene format=3 uid="uid://bo7jdtu7pypky"]
 
 [ext_resource type="Script" uid="uid://bxl5r3w133b76" path="res://src/characters/Player.cs" id="1_jk2m4"]
+[ext_resource type="AudioStream" uid="uid://tndpj3yi2qhr" path="res://assets/sounds/jump.wav" id="2_m0xnk"]
 [ext_resource type="Texture2D" uid="uid://2fgn1k5o0v3m" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Hit (32x32).png" id="3_7vyk4"]
+[ext_resource type="AudioStream" uid="uid://cawivghhpch6g" path="res://assets/sounds/running.wav" id="3_cro7t"]
+[ext_resource type="AudioStream" uid="uid://7j1m4bw4oglj" path="res://assets/sounds/hurt.wav" id="4_q4687"]
+[ext_resource type="AudioStream" uid="uid://g0n71cde30dl" path="res://assets/sounds/rolling.wav" id="5_8el8x"]
 [ext_resource type="Texture2D" uid="uid://dfmi6na7pq60k" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Double Jump (32x32).png" id="5_qgnko"]
+[ext_resource type="AudioStream" uid="uid://bwi288kcne45" path="res://assets/sounds/wall_slide.wav" id="6_dhihs"]
 [ext_resource type="Texture2D" uid="uid://ef42o482poq1" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Run (32x32).png" id="7_eojnx"]
 [ext_resource type="Texture2D" uid="uid://drrgw5qnedr42" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Wall Jump (32x32).png" id="8_qgnko"]
 [ext_resource type="Texture2D" uid="uid://bcgi7w04irxi6" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Fall (32x32).png" id="13_yhyq5"]
 [ext_resource type="Texture2D" uid="uid://cnd2cg3a3ocqp" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Idle (32x32).png" id="14_5jukt"]
 [ext_resource type="Texture2D" uid="uid://w8irqp426afm" path="res://assets/sprites/Free/Main Characters/Virtual Guy/Jump (32x32).png" id="15_vwwfy"]
+[ext_resource type="Script" uid="uid://dc14sy156g45m" path="res://src/characters/PlayerAudioComponent.cs" id="16_cro7t"]
 [ext_resource type="Texture2D" uid="uid://rph8n5t7237d" path="res://assets/sprites/Free/Main Characters/Desappearing (96x96).png" id="16_dg40j"]
 [ext_resource type="Texture2D" uid="uid://cplswpuv6a3fv" path="res://assets/sprites/Free/Main Characters/Appearing (96x96).png" id="17_7xgtv"]
 
@@ -459,8 +465,6 @@ animations = [{
 "speed": 12.0
 }]
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_k4v7y"]
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xhtjm"]
 radius = 9.0
 height = 24.0
@@ -479,9 +483,6 @@ animation = &"jump_double"
 autoplay = "idle"
 metadata/_edit_lock_ = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1217865474]
-libraries/ = SubResource("AnimationLibrary_k4v7y")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=562443067]
 position = Vector2(-3, 11)
 shape = SubResource("CapsuleShape2D_xhtjm")
@@ -496,3 +497,19 @@ drag_horizontal_enabled = true
 drag_vertical_enabled = true
 editor_draw_drag_margin = true
 metadata/_edit_lock_ = true
+
+[node name="PlayerAudioComponent" type="Node2D" parent="." unique_id=1588046282 node_paths=PackedStringArray("LoopPlayer", "OneShotPlayer")]
+script = ExtResource("16_cro7t")
+LoopPlayer = NodePath("LoopSfxPlayer")
+OneShotPlayer = NodePath("OneShotSfxPlayer")
+JumpSfx = ExtResource("2_m0xnk")
+RunningSfx = ExtResource("3_cro7t")
+HurtSfx = ExtResource("4_q4687")
+RollingSfx = ExtResource("5_8el8x")
+WallSlideSfx = ExtResource("6_dhihs")
+
+[node name="LoopSfxPlayer" type="AudioStreamPlayer2D" parent="PlayerAudioComponent" unique_id=1144463580]
+bus = &"PlayerSFX"
+
+[node name="OneShotSfxPlayer" type="AudioStreamPlayer2D" parent="PlayerAudioComponent" unique_id=2108834050]
+bus = &"PlayerSFX"

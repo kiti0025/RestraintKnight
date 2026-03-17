@@ -242,6 +242,11 @@ public partial class Player : CharacterBody2D
 		_invincibleTimer = InvincibleDuration;
 		_currentState = PlayerState.Hit;
 
+		// ✅【修复核心】强制立即播放受伤动画
+		PlayerSprite.Play("hit");
+		_currentAnimName = "hit";
+
+
 		// 只发事件，不处理音效
 		EmitSignal(SignalName.OnTakeDamage);
 		EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);

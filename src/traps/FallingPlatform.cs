@@ -21,6 +21,12 @@ public partial class FallingPlatform : StaticBody2D
 
     [ExportGroup("检测配置")]
     [Export] public string PlayerGroup { get; set; } = "player";
+
+    // ====================== 新增：摇晃音效配置 ======================
+    [ExportGroup("音效配置")]
+    [Export] public AudioStream ShakeSfx;          // 摇晃音效资源
+    [Export] public AudioStreamPlayer2D ShakePlayer; // 静态音效节点
+    // ==============================================================
     #endregion
 
     #region 内部状态
@@ -49,6 +55,10 @@ public partial class FallingPlatform : StaticBody2D
 
         _triggerArea = GetNodeOrNull<Area2D>("Area2D");
         _sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
+        
+        // ====================== 新增：自动获取音效节点 ======================
+        ShakePlayer ??= GetNodeOrNull<AudioStreamPlayer2D>("AudioStreamPlayer2D");
+        // ==================================================================
 
         if (_triggerArea == null)
         {
@@ -71,6 +81,7 @@ public partial class FallingPlatform : StaticBody2D
         }
         _playersOnPlatform.Clear();
         _playerSnapshot.Clear();
+        base._ExitTree();
     }
     #endregion
 
@@ -123,6 +134,15 @@ public partial class FallingPlatform : StaticBody2D
 
     private async Task DoShake()
     {
+        // ====================== 新增：开始摇晃时播放音效 ======================
+        if (ShakeSfx != null && ShakePlayer != null)
+        {
+            ShakePlayer.Stop();
+            ShakePlayer.Stream = ShakeSfx;
+            ShakePlayer.Play();
+        }
+        // ==================================================================
+
         _isShaking = true;
         _shakeElapsed = 0f;
 
@@ -159,7 +179,6 @@ public partial class FallingPlatform : StaticBody2D
         _triggerArea.Monitoring = true;
         _isTriggered = false;
         _playersOnPlatform.Clear();
-
     }
     #endregion
 

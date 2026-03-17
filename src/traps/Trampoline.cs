@@ -6,6 +6,11 @@ public partial class Trampoline : StaticBody2D
     [Export] private Area2D _bounceTriggerArea;
     [Export] private AnimatedSprite2D _animatedSprite;
     
+    // ====================== 新增音效配置 ======================
+    [Export] public AudioStream BounceSfx;          // 弹跳音效资源
+    [Export] public AudioStreamPlayer2D BouncePlayer; // 静态音效节点
+    // ==========================================================
+    
     // 加个标记，避免动画信号重复绑定
     private bool _isAnimConnected = false;
 
@@ -13,6 +18,10 @@ public partial class Trampoline : StaticBody2D
     {
         _bounceTriggerArea ??= GetNode<Area2D>("Area2D");
         _animatedSprite ??= GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+        
+        // ====================== 新增：自动获取音效节点 ======================
+        BouncePlayer ??= GetNodeOrNull<AudioStreamPlayer2D>("AudioStreamPlayer2D");
+        // ==================================================================
 
         _bounceTriggerArea.BodyEntered += OnBounceTriggerEntered;
 
@@ -31,6 +40,15 @@ public partial class Trampoline : StaticBody2D
 
         // 强制弹跳
         player.Velocity = new Vector2(player.Velocity.X, BounceForce);
+
+        // ====================== 新增：播放弹跳音效 ======================
+        if (BounceSfx != null && BouncePlayer != null)
+        {
+            BouncePlayer.Stop();
+            BouncePlayer.Stream = BounceSfx;
+            BouncePlayer.Play();
+        }
+        // ==============================================================
 
         // 播放动画，只在未绑定时绑定信号
         if (_animatedSprite.SpriteFrames.HasAnimation("jump") && !_isAnimConnected)

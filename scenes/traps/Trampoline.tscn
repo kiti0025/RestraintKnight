@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bob1a1aqlfbjl" path="res://assets/sprites/Free/Traps/Trampoline/Idle.png" id="1_d21dk"]
 [ext_resource type="Script" uid="uid://yum40q0nve88" path="res://src/traps/Trampoline.cs" id="1_kyg5h"]
 [ext_resource type="Texture2D" uid="uid://dlexdc8a7xrbq" path="res://assets/sprites/Free/Traps/Trampoline/Jump (28x28).png" id="2_kyg5h"]
+[ext_resource type="AudioStream" uid="uid://d18s3egaqowsc" path="res://assets/sounds/Trampoline.wav" id="2_rgpi2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rgpi2"]
 atlas = ExtResource("1_d21dk")
@@ -86,12 +87,14 @@ size = Vector2(21, 3)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rgpi2"]
 size = Vector2(19, 3)
 
-[node name="Trampoline" type="StaticBody2D" unique_id=2047662851 node_paths=PackedStringArray("_bounceTriggerArea", "_animatedSprite")]
+[node name="Trampoline" type="StaticBody2D" unique_id=2047662851 node_paths=PackedStringArray("_bounceTriggerArea", "_animatedSprite", "BouncePlayer")]
 collision_layer = 64
 collision_mask = 0
 script = ExtResource("1_kyg5h")
 _bounceTriggerArea = NodePath("Area2D")
 _animatedSprite = NodePath("AnimatedSprite2D")
+BounceSfx = ExtResource("2_rgpi2")
+BouncePlayer = NodePath("AudioStreamPlayer2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=831476707]
 sprite_frames = SubResource("SpriteFrames_k0et7")
@@ -110,3 +113,7 @@ monitorable = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=177216973]
 position = Vector2(-0.5, 4.5)
 shape = SubResource("RectangleShape2D_rgpi2")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1195188582]
+volume_db = 2.0
+bus = &"PlayerSFX"

@@ -49,6 +49,7 @@ text = "分数："
 metadata/_edit_use_anchors_ = true
 
 [node name="UiGameOver" type="CanvasLayer" parent="." unique_id=1474067085 node_paths=PackedStringArray("_background", "_gameOverLabel", "_restartButton")]
+visible = false
 script = ExtResource("3_6o7sd")
 _background = NodePath("ColorRect")
 _gameOverLabel = NodePath("Label")

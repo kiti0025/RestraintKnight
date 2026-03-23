@@ -143,7 +143,8 @@ public partial class Player : CharacterBody2D
 		
 		if (isRolling)
 		{
-			float speed = PlayerSprite.Frame == 8 ? 8f : 0f;
+			float speed = PlayerSprite.Frame < 8 ? 2.5f : 0f;
+			speed = PlayerSprite.Frame < 3 ? -0.15f : speed; 
 			_velocity.X = _faceDirection * MoveSpeed * speed;
 		}
 		else

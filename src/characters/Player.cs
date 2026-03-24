@@ -44,6 +44,9 @@ public partial class Player : CharacterBody2D
 	[ExportGroup("Health")]
 	[Export] public int MaxHealth = 3; 
 	[Export] public float InvincibleDuration = 1f;
+
+	[ExportGroup("Skill Effects")]
+	[Export] public PackedScene RollingFireEffect; 
 	#endregion
 
 	#region Runtime State
@@ -96,6 +99,8 @@ public partial class Player : CharacterBody2D
 	{
 		if (PlayerSprite == null)
 			PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+
+		 PlayerSprite.FrameChanged += OnRollingFrameChanged;
 		
 		_currentHealth = MaxHealth; 
 		EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
@@ -374,6 +379,34 @@ public partial class Player : CharacterBody2D
 		uiGameOver?.ShowGameOver();
 	}
 	#endregion
+
+	// --------------------------
+	// 【正确】监听帧变化，在rolling第20帧触发特效
+	// --------------------------
+	private void OnRollingFrameChanged()
+	{
+		// 1. 只处理rolling动画，过滤其他所有动画
+		if (PlayerSprite.Animation != "rolling")
+			return;
+
+		// 2. 只在第20帧触发（⚠️ Godot动画帧是0-based：编辑器里的第20帧 = 代码里的19）
+		// 如果触发时机不对，把19改成20即可（对应编辑器里的第21帧）
+		if (PlayerSprite.Frame != 15)
+			return;
+
+		// 3. 防止空引用报错
+		if (RollingFireEffect == null)
+			return;
+
+		// 4. 实例化特效
+		var fireEffect = RollingFireEffect.Instantiate<FireAttack>();
+		
+		// 5. 把特效加到Player的父节点（和Player同层级，不跟着角色移动）
+		GetParent().AddChild(fireEffect);
+		
+		// 6. 初始化特效（传入角色位置和朝向）
+		fireEffect.Init(GlobalPosition, _faceDirection);
+	}
 
 	#region 修改：动画更新
 	private void UpdateAnimation()

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bxl5r3w133b76" path="res://src/characters/Player.cs" id="1_jk2m4"]
 [ext_resource type="AudioStream" uid="uid://tndpj3yi2qhr" path="res://assets/sounds/jump.wav" id="2_m0xnk"]
 [ext_resource type="Texture2D" uid="uid://bxr4tt0mtbvww" path="res://assets/sprites/Player.png" id="2_m6phi"]
+[ext_resource type="PackedScene" uid="uid://dn0h5aywcyrq0" path="res://scenes/characters/FireAttack.tscn" id="2_oihyf"]
 [ext_resource type="AudioStream" uid="uid://cawivghhpch6g" path="res://assets/sounds/running.wav" id="3_cro7t"]
 [ext_resource type="AudioStream" uid="uid://7j1m4bw4oglj" path="res://assets/sounds/hurt.wav" id="4_q4687"]
 [ext_resource type="AudioStream" uid="uid://g0n71cde30dl" path="res://assets/sounds/rolling.wav" id="5_8el8x"]
@@ -962,15 +963,14 @@ collision_layer = 2
 collision_mask = 193
 script = ExtResource("1_jk2m4")
 MaxHealth = 30
+RollingFireEffect = ExtResource("2_oihyf")
 metadata/_edit_lock_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1367183918]
 position = Vector2(-3, 7)
 sprite_frames = SubResource("SpriteFrames_jk2m4")
-animation = &"walk_defend"
+animation = &"rolling"
 autoplay = "idle"
-frame = 3
-frame_progress = 0.34444612
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=562443067]

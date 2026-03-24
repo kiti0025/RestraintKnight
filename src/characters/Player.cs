@@ -17,7 +17,8 @@ public enum PlayerState
 	Attack4,
 	Attack5,
 	Attack6,
-	Defend
+	Defend,
+	Walk_defend
 }
 
 public partial class Player : CharacterBody2D
@@ -264,7 +265,8 @@ public partial class Player : CharacterBody2D
 		// 【优先级1】防御输入
 		if (_isDefendPressed)
 		{
-			newState = PlayerState.Defend;
+			bool hasHorizontalInput = Mathf.Abs(_moveInput.X) > InputDeadzone;
+			newState = hasHorizontalInput ? PlayerState.Walk_defend : PlayerState.Defend;
 		}
 		// 【优先级2】上+攻击 (Attack5)
 		else if (_isAttackJustPressed && Input.IsActionPressed("move_up") && !_hasTriggeredAnyAttack)
@@ -394,6 +396,7 @@ public partial class Player : CharacterBody2D
 			PlayerState.Attack5 => "attack_5",
 			PlayerState.Attack6 => "attack_6",
 			PlayerState.Defend => "idle_defend",
+			PlayerState.Walk_defend => "walk_defend",
 			_ => "idle"
 		};
 

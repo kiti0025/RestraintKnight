@@ -967,8 +967,10 @@ metadata/_edit_lock_ = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1367183918]
 position = Vector2(-3, 7)
 sprite_frames = SubResource("SpriteFrames_jk2m4")
-animation = &"attack_1"
+animation = &"walk_defend"
 autoplay = "idle"
+frame = 3
+frame_progress = 0.34444612
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=562443067]
@@ -976,7 +978,6 @@ position = Vector2(-22, 12)
 shape = SubResource("CapsuleShape2D_xhtjm")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2030668559]
-zoom = Vector2(1.5, 1.5)
 limit_smoothed = true
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
